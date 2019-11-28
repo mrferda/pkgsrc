@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1067 2019/11/13 10:36:19 ng0 Exp $
+# $NetBSD: Makefile,v 1.1072 2019/11/26 16:52:25 ng0 Exp $
 #
 
 COMMENT=	Text processing utilities (does not include desktop publishing)
@@ -238,7 +238,9 @@ SUBDIR+=	gspell
 SUBDIR+=	gtk-doc
 SUBDIR+=	gtkspell
 SUBDIR+=	gtkspell3
+SUBDIR+=	guile-commonmark
 SUBDIR+=	guile-json
+SUBDIR+=	guile-syntax-highlight
 SUBDIR+=	gutcheck
 SUBDIR+=	halibut
 SUBDIR+=	harmony
@@ -381,6 +383,7 @@ SUBDIR+=	kapidox
 SUBDIR+=	kbanner
 SUBDIR+=	kcodecs
 SUBDIR+=	kcompletion
+SUBDIR+=	kpimtextedit
 SUBDIR+=	latex2html
 SUBDIR+=	libclucene
 SUBDIR+=	libcroco
@@ -458,6 +461,7 @@ SUBDIR+=	openjade
 SUBDIR+=	opensp
 SUBDIR+=	ots
 SUBDIR+=	p5-Alien-Hunspell
+SUBDIR+=	p5-Alien-Libxml2
 SUBDIR+=	p5-Biblio-EndnoteStyle
 SUBDIR+=	p5-CAM-PDF
 SUBDIR+=	p5-Convert-ASCII-Armour
@@ -1101,6 +1105,7 @@ SUBDIR+=	yaml-cpp
 SUBDIR+=	yelp-tools
 SUBDIR+=	yelp-xsl
 SUBDIR+=	yodl
+SUBDIR+=	yq
 SUBDIR+=	zoem
 
 .include "../mk/misc/category.mk"

@@ -43,7 +43,7 @@ func (m MkVarUseModifier) IsSuffixSubst() bool {
 }
 
 func (m MkVarUseModifier) MatchSubst() (ok bool, regex bool, from string, to string, options string) {
-	p := NewMkParser(nil, m.Text)
+	p := NewMkLexer(m.Text, nil)
 	return p.varUseModifierSubst('}')
 }
 
@@ -110,7 +110,7 @@ func (m MkVarUseModifier) IsToLower() bool { return m.Text == "tl" }
 func (m MkVarUseModifier) ChangesWords() bool {
 	text := m.Text
 
-	// See MkParser.VarUseModifiers for the meaning of these modifiers.
+	// See MkParser.varUseModifier for the meaning of these modifiers.
 	switch text[0] {
 
 	case 'E', 'H', 'M', 'N', 'O', 'R', 'T':

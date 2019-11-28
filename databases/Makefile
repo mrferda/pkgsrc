@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.587 2019/11/10 14:42:43 ng0 Exp $
+# $NetBSD: Makefile,v 1.590 2019/11/27 10:34:22 ng0 Exp $
 
 COMMENT=	Databases
 
@@ -41,12 +41,14 @@ SUBDIR+=	gnome-mime-data
 SUBDIR+=	go-etcd
 SUBDIR+=	go-ldap
 SUBDIR+=	go-sqlite3
+SUBDIR+=	go-tiedot
 SUBDIR+=	gourmet
 SUBDIR+=	gq
 SUBDIR+=	gramps3
 SUBDIR+=	gtkdbfeditor
 SUBDIR+=	gtksql
 SUBDIR+=	guile-pg
+SUBDIR+=	guile-sqlite3
 SUBDIR+=	hiredis
 SUBDIR+=	hsqldb18
 SUBDIR+=	idzebra
@@ -61,6 +63,7 @@ SUBDIR+=	jdbc-mysql31
 SUBDIR+=	jdbc-mysql5
 SUBDIR+=	jdbc-mysql51
 SUBDIR+=	jdbc-postgresql94
+SUBDIR+=	kldap
 SUBDIR+=	kyotocabinet
 SUBDIR+=	lbdb
 SUBDIR+=	ldapvi

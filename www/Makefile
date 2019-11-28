@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1414 2019/11/06 13:35:18 ng0 Exp $
+# $NetBSD: Makefile,v 1.1417 2019/11/26 18:10:54 ng0 Exp $
 #
 
 COMMENT=	Packages related to the World Wide Web
@@ -139,6 +139,7 @@ SUBDIR+=	goaccess
 SUBDIR+=	grafana
 SUBDIR+=	gtkasp2php
 SUBDIR+=	gtkhtml314
+SUBDIR+=	guile-haunt
 SUBDIR+=	gwt
 SUBDIR+=	h2o
 SUBDIR+=	haskell-cgi
@@ -166,6 +167,7 @@ SUBDIR+=	kannel
 SUBDIR+=	kdewebdev4
 SUBDIR+=	kdewebkit
 SUBDIR+=	khtml
+SUBDIR+=	kimagemapeditor
 SUBDIR+=	kjs
 SUBDIR+=	kjsembed
 SUBDIR+=	kore
@@ -254,6 +256,7 @@ SUBDIR+=	p5-Apache2-AuthCASSimple
 SUBDIR+=	p5-Apache2-AuthCookie
 SUBDIR+=	p5-Apache2-AuthCookieDBI
 SUBDIR+=	p5-App-Nopaste
+SUBDIR+=	p5-Browser-Open
 SUBDIR+=	p5-CGI
 SUBDIR+=	p5-CGI-Ajax
 SUBDIR+=	p5-CGI-Application

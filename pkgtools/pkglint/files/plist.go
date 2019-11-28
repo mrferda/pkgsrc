@@ -9,7 +9,7 @@ import (
 
 func CheckLinesPlist(pkg *Package, lines *Lines) {
 	if trace.Tracing {
-		defer trace.Call1(lines.Filename)()
+		defer trace.Call(lines.Filename)()
 	}
 
 	idOk := lines.CheckCvsID(0, `@comment `, "@comment ")
@@ -31,8 +31,8 @@ func CheckLinesPlist(pkg *Package, lines *Lines) {
 
 	ck := PlistChecker{
 		pkg,
-		make(map[string]*PlistLine),
-		make(map[string]*PlistLine),
+		make(map[Path]*PlistLine),
+		make(map[Path]*PlistLine),
 		"",
 		Once{},
 		false}
@@ -41,17 +41,11 @@ func CheckLinesPlist(pkg *Package, lines *Lines) {
 
 type PlistChecker struct {
 	pkg             *Package
-	allFiles        map[string]*PlistLine
-	allDirs         map[string]*PlistLine
+	allFiles        map[Path]*PlistLine
+	allDirs         map[Path]*PlistLine
 	lastFname       string
 	once            Once
 	nonAsciiAllowed bool
-}
-
-type PlistLine struct {
-	*Line
-	conditions []string // e.g. PLIST.docs
-	text       string   // Line.Text without any conditions of the form ${PLIST.cond}
 }
 
 func (ck *PlistChecker) Load(lines *Lines) []*PlistLine {
@@ -59,7 +53,7 @@ func (ck *PlistChecker) Load(lines *Lines) []*PlistLine {
 	ck.collectFilesAndDirs(plines)
 
 	if lines.BaseName == "PLIST.common_end" {
-		commonLines := Load(strings.TrimSuffix(lines.Filename, "_end"), NotEmpty)
+		commonLines := Load(lines.Filename.TrimSuffix("_end"), NotEmpty)
 		if commonLines != nil {
 			ck.collectFilesAndDirs(ck.NewLines(commonLines))
 		}
@@ -113,15 +107,16 @@ func (ck *PlistChecker) collectFilesAndDirs(plines []*PlistLine) {
 			first := text[0]
 			switch {
 			case plistLineStart.Contains(first):
-				if prev := ck.allFiles[text]; prev == nil || stringSliceLess(pline.conditions, prev.conditions) {
-					ck.allFiles[text] = pline
+				path := NewPath(text)
+				if prev := ck.allFiles[path]; prev == nil || stringSliceLess(pline.conditions, prev.conditions) {
+					ck.allFiles[path] = pline
 				}
-				for dir := path.Dir(text); dir != "."; dir = path.Dir(dir) {
+				for dir := path.Dir(); dir != "."; dir = dir.Dir() {
 					ck.allDirs[dir] = pline
 				}
 			case first == '@':
 				if m, dirname := match1(text, `^@exec \$\{MKDIR\} %D/(.*)$`); m {
-					for dir := dirname; dir != "."; dir = path.Dir(dir) {
+					for dir := NewPath(dirname); dir != "."; dir = dir.Dir() {
 						ck.allDirs[dir] = pline
 					}
 				}
@@ -196,7 +191,7 @@ func (ck *PlistChecker) checkPath(pline *PlistLine) {
 		ck.checkPathShare(pline)
 	}
 
-	if contains(text, "${PKGLOCALEDIR}") && ck.pkg != nil && !ck.pkg.vars.Defined("USE_PKGLOCALEDIR") {
+	if contains(text, "${PKGLOCALEDIR}") && ck.pkg != nil && !ck.pkg.vars.IsDefined("USE_PKGLOCALEDIR") {
 		pline.Warnf("PLIST contains ${PKGLOCALEDIR}, but USE_PKGLOCALEDIR is not set in the package Makefile.")
 	}
 
@@ -265,7 +260,7 @@ func (ck *PlistChecker) checkDuplicate(pline *PlistLine) {
 		return
 	}
 
-	prev := ck.allFiles[text]
+	prev := ck.allFiles[NewPath(text)]
 	if prev == pline || len(prev.conditions) > 0 {
 		return
 	}
@@ -307,7 +302,7 @@ func (ck *PlistChecker) checkPathInfo(pline *PlistLine, dirname, basename string
 		return
 	}
 
-	if ck.pkg != nil && !ck.pkg.vars.Defined("INFO_FILES") {
+	if ck.pkg != nil && !ck.pkg.vars.IsDefined("INFO_FILES") {
 		pline.Warnf("Packages that install info files should set INFO_FILES in the Makefile.")
 	}
 }
@@ -323,7 +318,7 @@ func (ck *PlistChecker) checkPathLib(pline *PlistLine, dirname, basename string)
 
 	if contains(basename, ".a") || contains(basename, ".so") {
 		if m, noext := match1(pline.text, `^(.*)(?:\.a|\.so[0-9.]*)$`); m {
-			if laLine := ck.allFiles[noext+".la"]; laLine != nil {
+			if laLine := ck.allFiles[NewPath(noext+".la")]; laLine != nil {
 				pline.Warnf("Redundant library found. The libtool library is in %s.", pline.RefTo(laLine.Line))
 			}
 		}
@@ -338,7 +333,7 @@ func (ck *PlistChecker) checkPathLib(pline *PlistLine, dirname, basename string)
 		pline.Errorf("Only the libiconv package may install lib/charset.alias.")
 	}
 
-	if hasSuffix(basename, ".la") && !pkg.vars.Defined("USE_LIBTOOL") {
+	if hasSuffix(basename, ".la") && !pkg.vars.IsDefined("USE_LIBTOOL") {
 		if ck.once.FirstTime("USE_LIBTOOL") {
 			pline.Warnf("Packages that install libtool libraries should define USE_LIBTOOL.")
 		}
@@ -356,7 +351,7 @@ func (ck *PlistChecker) checkPathMan(pline *PlistLine) {
 		pline.Warnf("Unknown section %q for manual page.", section)
 	}
 
-	if catOrMan == "cat" && ck.allFiles["man/man"+section+"/"+manpage+"."+section] == nil {
+	if catOrMan == "cat" && ck.allFiles[NewPath("man/man"+section+"/"+manpage+"."+section)] == nil {
 		pline.Warnf("Preformatted manual page without unformatted one.")
 	}
 
@@ -433,9 +428,15 @@ func (ck *PlistChecker) checkPathShareIcons(pline *PlistLine) {
 		}
 	}
 
-	if contains(text[12:], "/") && !pkg.vars.Defined("ICON_THEMES") && ck.once.FirstTime("ICON_THEMES") {
+	if contains(text[12:], "/") && !pkg.vars.IsDefined("ICON_THEMES") && ck.once.FirstTime("ICON_THEMES") {
 		pline.Warnf("Packages that install icon theme files should set ICON_THEMES.")
 	}
+}
+
+type PlistLine struct {
+	*Line
+	conditions []string // e.g. PLIST.docs
+	text       string   // Line.Text without any conditions of the form ${PLIST.cond}
 }
 
 func (pline *PlistLine) CheckTrailingWhitespace() {

@@ -1,7 +1,6 @@
 package pkglint
 
 import (
-	"io/ioutil"
 	"netbsd.org/pkglint/regex"
 	"os"
 	"strconv"
@@ -30,7 +29,6 @@ type autofixShortTerm struct {
 	diagFormat  string          // Is logged only if it couldn't be fixed automatically
 	diagArgs    []interface{}   //
 	explanation []string        // Is printed together with the diagnostic
-	anyway      bool            // Print the diagnostic even if it cannot be autofixed
 }
 
 type autofixAction struct {
@@ -127,20 +125,20 @@ func (fix *Autofix) ReplaceAfter(prefix, from string, to string) {
 
 // ReplaceAt replaces the text "from" with "to", a single time.
 // But only if the text at the given position is indeed "from".
-func (fix *Autofix) ReplaceAt(rawIndex int, textIndex int, from string, to string) {
+func (fix *Autofix) ReplaceAt(rawIndex int, textIndex int, from string, to string) (modified bool, replaced string) {
 	assert(from != to)
 	fix.assertRealLine()
 
 	if fix.skip() {
-		return
+		return false, ""
 	}
 
 	rawLine := fix.line.raw[rawIndex]
 	if textIndex >= len(rawLine.textnl) || !hasPrefix(rawLine.textnl[textIndex:], from) {
-		return
+		return false, ""
 	}
 
-	replaced := rawLine.textnl[:textIndex] + to + rawLine.textnl[textIndex+len(from):]
+	replaced = rawLine.textnl[:textIndex] + to + rawLine.textnl[textIndex+len(from):]
 
 	if G.Logger.IsAutofix() {
 		rawLine.textnl = replaced
@@ -157,7 +155,7 @@ func (fix *Autofix) ReplaceAt(rawIndex int, textIndex int, from string, to strin
 		}
 	}
 	fix.Describef(rawLine.Lineno, "Replacing %q with %q.", from, to)
-	return
+	return true, replaced
 }
 
 // ReplaceRegex replaces the first howOften or all occurrences (if negative)
@@ -215,44 +213,6 @@ func (fix *Autofix) ReplaceRegex(from regex.Pattern, toText string, howOften int
 		})
 }
 
-// Custom runs a custom fix action, unless the fix is skipped anyway
-// because of the --only option.
-//
-// The fixer function must check whether it can actually fix something,
-// and if so, call Describef to describe the actual fix.
-//
-// If showAutofix and autofix are both false, the fix must only be
-// described by calling Describef. No observable modification must be done,
-// not even in memory.
-//
-// If showAutofix is true but autofix is false, the fix should be done in
-// memory as far as possible. For example, changing the text of Line.raw
-// is appropriate, but changing files in the file system is not.
-//
-// Only if autofix is true, fixes other than modifying the current Line
-// should be done persistently, such as changes to the file system.
-//
-// In any case, changes to the current Line will be written back to disk
-// by SaveAutofixChanges, after fixing all the lines in the file at once.
-func (fix *Autofix) Custom(fixer func(showAutofix, autofix bool)) {
-	// Contrary to the fixes that modify the line text, this one
-	// can be run even on dummy lines (like those standing for a
-	// file at whole), for example to fix the permissions of the file.
-
-	if fix.skip() {
-		return
-	}
-
-	fixer(G.Logger.Opts.ShowAutofix, G.Logger.Opts.Autofix)
-}
-
-// Describef is used while Autofix.Custom is called to remember a description
-// of the actual fix for logging it later when Apply is called.
-// Describef may be called multiple times before calling Apply.
-func (fix *Autofix) Describef(lineno int, format string, args ...interface{}) {
-	fix.actions = append(fix.actions, autofixAction{sprintf(format, args...), lineno})
-}
-
 // InsertBefore prepends a line before the current line.
 // The newline is added internally.
 func (fix *Autofix) InsertBefore(text string) {
@@ -298,13 +258,42 @@ func (fix *Autofix) Delete() {
 	}
 }
 
-// Anyway has the effect of showing the diagnostic even when nothing can
-// be fixed automatically.
+// Custom runs a custom fix action, unless the fix is skipped anyway
+// because of the --only option.
 //
-// As usual, the diagnostic is only shown if neither --show-autofix nor
-// --autofix mode is given.
-func (fix *Autofix) Anyway() {
-	fix.anyway = !G.Logger.IsAutofix()
+// The fixer function must check whether it can actually fix something,
+// and if so, call Describef to describe the actual fix.
+//
+// If showAutofix and autofix are both false, the fix must only be
+// described by calling Describef. No observable modification must be done,
+// not even in memory.
+//
+// If showAutofix is true but autofix is false, the fix should be done in
+// memory as far as possible. For example, changing the text of Line.raw
+// is appropriate, but changing files in the file system is not.
+//
+// Only if autofix is true, fixes other than modifying the current Line
+// should be done persistently, such as changes to the file system.
+//
+// In any case, changes to the current Line will be written back to disk
+// by SaveAutofixChanges, after fixing all the lines in the file at once.
+func (fix *Autofix) Custom(fixer func(showAutofix, autofix bool)) {
+	// Contrary to the fixes that modify the line text, this one
+	// can be run even on dummy lines (like those standing for a
+	// file at whole), for example to fix the permissions of the file.
+
+	if fix.skip() {
+		return
+	}
+
+	fixer(G.Logger.Opts.ShowAutofix, G.Logger.Opts.Autofix)
+}
+
+// Describef is used while Autofix.Custom is called to remember a description
+// of the actual fix for logging it later when Apply is called.
+// Describef may be called multiple times before calling Apply.
+func (fix *Autofix) Describef(lineno int, format string, args ...interface{}) {
+	fix.actions = append(fix.actions, autofixAction{sprintf(format, args...), lineno})
 }
 
 // Apply does the actual work.
@@ -331,7 +320,7 @@ func (fix *Autofix) Apply() {
 		fix.autofixShortTerm = autofixShortTerm{}
 	}
 
-	if !(G.Logger.Relevant(fix.diagFormat) && (len(fix.actions) > 0 || fix.anyway)) {
+	if !(G.Logger.Relevant(fix.diagFormat) && (len(fix.actions) > 0 || !G.Logger.IsAutofix())) {
 		reset()
 		return
 	}
@@ -373,6 +362,21 @@ func (fix *Autofix) Apply() {
 	reset()
 }
 
+func (fix *Autofix) setDiag(level *LogLevel, format string, args []interface{}) {
+	if G.Testing && format != SilentAutofixFormat {
+		assertf(
+			hasSuffix(format, "."),
+			"Autofix: format %q must end with a period.",
+			format)
+	}
+	assert(fix.level == nil)     // Autofix can only have a single diagnostic.
+	assert(fix.diagFormat == "") // Autofix can only have a single diagnostic.
+
+	fix.level = level
+	fix.diagFormat = format
+	fix.diagArgs = args
+}
+
 func (fix *Autofix) affectedLinenos() string {
 	if len(fix.actions) == 0 {
 		return fix.line.Linenos()
@@ -399,21 +403,6 @@ func (fix *Autofix) affectedLinenos() string {
 	} else {
 		return strconv.Itoa(first)
 	}
-}
-
-func (fix *Autofix) setDiag(level *LogLevel, format string, args []interface{}) {
-	if G.Testing && format != SilentAutofixFormat {
-		assertf(
-			hasSuffix(format, "."),
-			"Autofix: format %q must end with a period.",
-			format)
-	}
-	assert(fix.level == nil)     // Autofix can only have a single diagnostic.
-	assert(fix.diagFormat == "") // Autofix can only have a single diagnostic.
-
-	fix.level = level
-	fix.diagFormat = format
-	fix.diagArgs = args
 }
 
 // skip returns whether this autofix should be skipped because
@@ -452,8 +441,14 @@ func SaveAutofixChanges(lines *Lines) (autofixed bool) {
 		return
 	}
 
-	changes := make(map[string][]string)
-	changed := make(map[string]bool)
+	if G.Testing {
+		abs := abspath(lines.Filename)
+		absTmp := abspath(NewPathSlash(os.TempDir()))
+		assertf(abs.HasPrefixPath(absTmp), "%q must be inside %q", abs, absTmp)
+	}
+
+	changes := make(map[Path][]string)
+	changed := make(map[Path]bool)
 	for _, line := range lines.Lines {
 		chlines := changes[line.Filename]
 		if fix := line.autofix; fix != nil {
@@ -481,14 +476,14 @@ func SaveAutofixChanges(lines *Lines) (autofixed bool) {
 		for _, changedLine := range changedLines {
 			text.WriteString(changedLine)
 		}
-		err := ioutil.WriteFile(tmpName, []byte(text.String()), 0666)
+		err := tmpName.WriteString(text.String())
 		if err != nil {
-			G.Logger.Errorf(tmpName, "Cannot write: %s", err)
+			G.Logger.TechErrorf(tmpName, "Cannot write: %s", err)
 			continue
 		}
-		err = os.Rename(tmpName, filename)
+		err = tmpName.Rename(filename)
 		if err != nil {
-			G.Logger.Errorf(tmpName, "Cannot overwrite with autofixed content: %s", err)
+			G.Logger.TechErrorf(tmpName, "Cannot overwrite with autofixed content: %s", err)
 			continue
 		}
 		autofixed = true

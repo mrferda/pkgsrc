@@ -1,4 +1,4 @@
-# $NetBSD: url2pkg_test.py,v 1.24 2019/10/28 20:17:24 rillig Exp $
+# $NetBSD: url2pkg_test.py,v 1.26 2019/11/18 07:56:02 rillig Exp $
 
 import pytest
 from url2pkg import *
@@ -889,6 +889,16 @@ def test_Adjuster_adjust_cmake(tmp_path: Path):
     assert str_vars(adjuster.build_vars) == ['USE_CMAKE=yes']
 
 
+def test_Adjuster_adjust_gnu_make(tmp_path: Path):
+    adjuster = Adjuster(g, '', Lines())
+    adjuster.abs_wrksrc = tmp_path
+    (tmp_path / 'Makefile').write_text('ifdef HAVE_STDIO_H')
+
+    adjuster.adjust_gnu_make()
+
+    assert adjuster.tools == {'gmake'}
+
+
 def test_Adjuster_adjust_configure__none(tmp_path: Path):
     adjuster = Adjuster(g, '', Lines())
     adjuster.abs_wrksrc = tmp_path
@@ -1241,6 +1251,7 @@ def test_Adjuster_generate_lines():
     assert adjuster.makefile_lines.set('#LICENSE', 'BSD # TODO: too unspecific')
     adjuster.depends.append('dependency>=0:../../category/dependency')
     adjuster.todos.append('Run pkglint')
+    adjuster.tools.add('gmake')
 
     lines = adjuster.generate_lines()
 
@@ -1259,6 +1270,8 @@ def test_Adjuster_generate_lines():
         '# TODO: Run pkglint',
         '',
         'DEPENDS+=       dependency>=0:../../category/dependency',
+        '',
+        'USE_TOOLS+=     gmake',
         '',
         '.include "../../mk/bsd.pkg.mk"',
     ]

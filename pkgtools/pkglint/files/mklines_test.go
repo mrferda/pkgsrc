@@ -6,23 +6,6 @@ import (
 	"strings"
 )
 
-func (s *Suite) Test_MkLines_Check__unusual_target(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpVartypes()
-	t.SetUpTool("cc", "CC", AtRunTime)
-	mklines := t.NewMkLines("Makefile",
-		MkCvsID,
-		"",
-		"echo: echo.c",
-		"\tcc -o ${.TARGET} ${.IMPSRC}")
-
-	mklines.Check()
-
-	t.CheckOutputLines(
-		"WARN: Makefile:3: Undeclared target \"echo\".")
-}
-
 func (s *Suite) Test_MkLines__quoting_LDFLAGS_for_GNU_configure(c *check.C) {
 	t := s.Init(c)
 
@@ -116,12 +99,48 @@ func (s *Suite) Test_MkLines__varuse_sh_modifier(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
+func (s *Suite) Test_MkLines_Check__unusual_target(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpVartypes()
+	t.SetUpTool("cc", "CC", AtRunTime)
+	mklines := t.NewMkLines("Makefile",
+		MkCvsID,
+		"",
+		"echo: echo.c",
+		"\tcc -o ${.TARGET} ${.IMPSRC}")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: Makefile:3: Undeclared target \"echo\".")
+}
+
+func (s *Suite) Test_MkLines_Check__loop_variable_used_outside_loop(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpTool("echo", "", AtRunTime)
+	mklines := t.NewMkLines("filename.mk",
+		MkCvsID,
+		"",
+		"do-install:",
+		"\techo ${msg}",
+		".for msg in message",
+		"\techo ${msg}",
+		".endfor")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: filename.mk:4: msg is used but not defined.")
+}
+
 // For parameterized variables, the "defined but not used" and
 // the "used but not defined" checks are loosened a bit.
 // When VAR.param1 is defined or used, VAR.param2 is also regarded
 // as defined or used since often in pkgsrc, parameterized variables
 // are not referred to by their exact names but by VAR.${param}.
-func (s *Suite) Test_MkLines__varuse_parameterized(c *check.C) {
+func (s *Suite) Test_MkLines_Check__varuse_parameterized(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -158,7 +177,7 @@ func (s *Suite) Test_MkLines__varuse_parameterized(c *check.C) {
 // Pkglint could offer to either add the missing semicolon.
 // Or, if it knows what INSTALL_DATA does, it could simply say that INSTALL_DATA
 // can handle multiple files in a single invocation.
-func (s *Suite) Test_MkLines__loop_modifier(c *check.C) {
+func (s *Suite) Test_MkLines_Check__loop_modifier(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -175,7 +194,7 @@ func (s *Suite) Test_MkLines__loop_modifier(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
-func (s *Suite) Test_MkLines__PKG_SKIP_REASON_depending_on_OPSYS(c *check.C) {
+func (s *Suite) Test_MkLines_Check__PKG_SKIP_REASON_depending_on_OPSYS(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -228,494 +247,6 @@ func (s *Suite) Test_MkLines_Check__absolute_pathname_depending_on_OPSYS(c *chec
 	// and used intentionally, so even commands that are not known tools are allowed.
 	t.CheckOutputLines(
 		"WARN: games/heretic2-demo/Makefile:5: Unknown shell command \"/usr/bin/bsdtar\".")
-}
-
-func (s *Suite) Test_MkLines_CheckUsedBy__show_autofix(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpCommandLine("--show-autofix")
-
-	test := func(pkgpath string, lines []string, diagnostics []string) {
-		mklines := t.NewMkLines("Makefile.common", lines...)
-
-		mklines.CheckUsedBy(pkgpath)
-
-		t.CheckOutput(diagnostics)
-	}
-
-	lines := func(lines ...string) []string { return lines }
-	diagnostics := func(diagnostics ...string) []string { return diagnostics }
-
-	// This file is too short to be checked.
-	test(
-		"category/package",
-		lines(),
-		diagnostics())
-
-	// Still too short.
-	test(
-		"category/package",
-		lines(
-			MkCvsID),
-		diagnostics())
-
-	// Still too short.
-	test(
-		"category/package",
-		lines(
-			MkCvsID,
-			""),
-		diagnostics())
-
-	// This file is correctly mentioned.
-	test(
-		"sysutils/mc",
-		lines(
-			MkCvsID,
-			"",
-			"# used by sysutils/mc"),
-		diagnostics())
-
-	// This file is not correctly mentioned, therefore the line is inserted.
-	test(
-		"category/package",
-		lines(
-			MkCvsID,
-			"",
-			"VARNAME=\tvalue"),
-		diagnostics(
-			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here.",
-			"AUTOFIX: Makefile.common:1: Inserting a line \"# used by category/package\" after this line."))
-
-	// The "used by" comments may either start in line 2 or in line 3.
-	test(
-		"category/package",
-		lines(
-			MkCvsID,
-			"#",
-			"#"),
-		diagnostics(
-			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here.",
-			"AUTOFIX: Makefile.common:1: Inserting a line \"# used by category/package\" after this line."))
-
-	// TODO: What if there is an introductory comment first? That should stay at the top of the file.
-	// TODO: What if the "used by" comments appear in the second paragraph, preceded by only comments and empty lines?
-
-	// Since the first paragraph already has some comments, the "used by"
-	// comments need their separate paragraph, which is inserted after
-	// the first paragraph.
-	test("category/package",
-		lines(
-			MkCvsID,
-			"# A normal comment",
-			"# that spans",
-			"# several lines"),
-		diagnostics(
-			"AUTOFIX: Makefile.common:4: Inserting a line \"\" after this line.",
-			"WARN: Makefile.common:4: Please add a line \"# used by category/package\" here.",
-			"AUTOFIX: Makefile.common:4: Inserting a line \"# used by category/package\" after this line."))
-
-	t.CheckEquals(G.Logger.autofixAvailable, true)
-}
-
-func (s *Suite) Test_MkLines_CheckUsedBy(c *check.C) {
-	t := s.Init(c)
-
-	test := func(pkgpath string, lines []string, diagnostics []string) {
-		mklines := t.NewMkLines("Makefile.common", lines...)
-
-		mklines.CheckUsedBy(pkgpath)
-
-		t.CheckOutput(diagnostics)
-	}
-
-	lines := func(lines ...string) []string { return lines }
-	diagnostics := func(diagnostics ...string) []string { return diagnostics }
-
-	// The including package is already mentioned in the single "used by"
-	// paragraph. Nothing needs to be changed.
-	test("category/package2/Makefile",
-		lines(
-			MkCvsID,
-			"# This Makefile fragment is",
-			"# used by category/package1/Makefile, as well as", // looks similar to the formal "used by".
-			"# some others.",
-			"",
-			"# used by category/package2/Makefile"),
-		diagnostics())
-
-	// The including file is not yet mentioned. There is a single "used by"
-	// paragraph, and the including file needs to be added to that paragraph.
-	// It is added in the correct sorting order. The entries are simply
-	// sorted alphabetically.
-	test("category/package/Makefile",
-		lines(
-			MkCvsID,
-			"# This Makefile fragment is",
-			"# used by category/package1/Makefile, as well as", // looks similar to the formal "used by".
-			"# some others.",
-			"",
-			"# used by category/package2/Makefile"),
-		diagnostics(
-			"WARN: Makefile.common:6: Please add a line \"# used by category/package/Makefile\" here."))
-
-	// There are two separate paragraphs with "used by" lines. The first of
-	// them is the interesting one. The new line is added to the first paragraph.
-	test("category/package",
-		lines(
-			MkCvsID,
-			"# used by category/package1",
-			"",
-			"# used by category/package2"),
-		diagnostics(
-			"WARN: Makefile.common:4: There should only be a single \"used by\" paragraph per file.",
-			"WARN: Makefile.common:2: Please add a line \"# used by category/package\" here."))
-
-	// The empty comment also separates the two paragraphs, like in the
-	// previous test case.
-	test("category/package",
-		lines(
-			MkCvsID,
-			"# used by category/package1",
-			"#",
-			"# used by category/package2"),
-		diagnostics(
-			"WARN: Makefile.common:4: There should only be a single \"used by\" paragraph per file.",
-			"WARN: Makefile.common:2: Please add a line \"# used by category/package\" here."))
-
-	// Code coverage for hasOther being true and conflict being non-nil.
-	// Ensures that the warning is printed in the first wrong line.
-	test("category/package",
-		lines(
-			MkCvsID,
-			"",
-			"# Unrelated comment.",
-			"# used by category/package1",
-			"# used by category/package2"),
-		diagnostics(
-			"WARN: Makefile.common:4: The \"used by\" lines should be in a separate paragraph.",
-			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here."))
-
-	// Code coverage for hasUsedBy being true and conflict being non-nil.
-	// Ensures that the warning is printed in the first wrong line.
-	test("category/package",
-		lines(
-			MkCvsID,
-			"",
-			"# used by category/package1",
-			"# Unrelated comment.",
-			"# Unrelated comment 2."),
-		diagnostics(
-			"WARN: Makefile.common:4: The \"used by\" lines should be in a separate paragraph.",
-			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here."))
-
-	t.CheckEquals(G.Logger.autofixAvailable, true)
-}
-
-func (s *Suite) Test_MkLines_CheckUsedBy__separate_paragraph(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("Makefile.common",
-		MkCvsID,
-		"# a comment",
-		"# used by category/package",
-		"# a comment")
-
-	mklines.CheckUsedBy("category/package")
-
-	t.CheckOutputLines(
-		"WARN: Makefile.common:3: The \"used by\" lines should be in a separate paragraph.")
-}
-
-func (s *Suite) Test_MkLines_ExpandLoopVar(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"",
-		".for file in a b c d e f g h",
-		".  for rank in 1 2 3 4 5 6 7 8",
-		"CHESS_BOARD+=\t${file}${rank}",
-		".  endfor",
-		".endfor")
-
-	var files []string
-	var ranks []string
-	var diagonals []string
-	mklines.ForEach(func(mkline *MkLine) {
-		if mkline.IsVarassign() {
-			ranks = mklines.ExpandLoopVar("rank")
-			files = mklines.ExpandLoopVar("file")
-			diagonals = mklines.ExpandLoopVar("diagonals")
-		}
-	})
-
-	t.CheckDeepEquals(files, strings.Split("abcdefgh", ""))
-	t.CheckDeepEquals(ranks, strings.Split("12345678", ""))
-	t.Check(diagonals, check.HasLen, 0)
-}
-
-func (s *Suite) Test_MkLines_ExpandLoopVar__multi(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"",
-		".if 1",
-		".  for key value in 1 one 2 two 3 three",
-		"VAR.${key}=\t${value}",
-		".  endfor",
-		".endif")
-
-	var keys []string
-	var values []string
-	mklines.ForEach(func(mkline *MkLine) {
-		if mkline.IsVarassign() {
-			keys = mklines.ExpandLoopVar("key")
-			values = mklines.ExpandLoopVar("value")
-		}
-	})
-
-	// As of June 2019, multi-variable .for loops are not yet implemented.
-	t.Check(keys, check.HasLen, 0)
-	t.Check(values, check.HasLen, 0)
-}
-
-func (s *Suite) Test_MkLines_ExpandLoopVar__malformed_for(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"",
-		".for var in",
-		"VAR=\t${var}",
-		".endfor")
-
-	var values = []string{"uninitialized"}
-	mklines.ForEach(func(mkline *MkLine) {
-		if mkline.IsVarassign() {
-			values = mklines.ExpandLoopVar("key")
-		}
-	})
-
-	t.Check(values, check.HasLen, 0)
-}
-
-func (s *Suite) Test_MkLines_collectRationale(c *check.C) {
-	t := s.Init(c)
-
-	test := func(specs ...string) {
-		lines := mapStr(specs, func(s string) string { return s[4:] })
-		mklines := t.NewMkLines("filename.mk", lines...)
-		mklines.collectRationale()
-		var actual []string
-		mklines.ForEach(func(mkline *MkLine) {
-			actual = append(actual, condStr(mkline.HasRationale(), "R   ", "-   ")+mkline.Text)
-		})
-		t.CheckDeepEquals(actual, specs)
-	}
-
-	// An uncommented line does not have a rationale.
-	test(
-		"-   VAR=value")
-
-	// The rationale can be given at the end of the line.
-	// This is useful for short explanations or remarks.
-	test(
-		"R   VAR=value # rationale")
-
-	// A rationale can be given above a line. This is useful for
-	// explanations that don't fit into a single line.
-	test(
-		"R   # rationale",
-		"R   VAR=value")
-
-	// A commented variable assignment is just that, commented code.
-	// It does not count as a rationale.
-	test(
-		"-   #VAR=value",
-		"-   VAR=value")
-
-	// An empty line ends the rationale. The empty line does have a
-	// rationale itself, but that is useless since pkglint doesn't
-	// check empty lines for rationales.
-	test(
-		"R   # rationale",
-		"R   ",
-		"-   VAR=value")
-
-	// A rationale covers all lines that follow, until the next empty
-	// line.
-	test(
-		"R   # rationale",
-		"R   NOT_FOR_PLATFORM+=\tLinux-*-*",
-		"R   NOT_FOR_PLATFORM+=\tNetBSD-*-*",
-		"R   NOT_FOR_PLATFORM+=\tCygwin-*-*")
-
-	// Large comment blocks often end with an empty comment line.
-	test(
-		"R   # rationale",
-		"R   #",
-		"R   NOT_FOR_PLATFORM+=\tLinux-*-*",
-		"R   NOT_FOR_PLATFORM+=\tNetBSD-*-*",
-		"R   NOT_FOR_PLATFORM+=\tCygwin-*-*")
-
-	// The CVS Id is not a rationale.
-	test(
-		"-   "+MkCvsID,
-		"-   VAR=\tvalue")
-
-	// A rationale at the end of a line applies only to that line.
-	test(
-		"-   VAR=\tvalue",
-		"R   VAR=\tvalue # rationale",
-		"-   VAR=\tvalue")
-}
-
-func (s *Suite) Test_MkLines_collectVariables(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpCommandLine("-Wall,no-space")
-	t.SetUpPkgsrc()
-	t.CreateFileLines("mk/tools/defaults.mk",
-		"USE_TOOLS+=     autoconf autoconf213")
-	mklines := t.NewMkLines("determine-defined-variables.mk",
-		MkCvsID,
-		"",
-		"USE_TOOLS+=             autoconf213 autoconf",
-		"",
-		"OPSYSVARS+=             OSV",
-		"OSV.NetBSD=             NetBSD-specific value",
-		"",
-		"SUBST_CLASSES+=         subst",
-		"SUBST_STAGE.subst=      pre-configure",
-		"SUBST_FILES.subst=      file",
-		"SUBST_VARS.subst=       SUV",
-		"SUV=                    value for substitution",
-		"",
-		"#BUILD_DEFS+=           VARBASE",
-		"",
-		"pre-configure:",
-		"\t${RUN} autoreconf; autoheader-2.13",
-		"\t${ECHO} ${OSV:Q}")
-	t.FinishSetUp()
-
-	mklines.Check()
-
-	// The tools autoreconf and autoheader213 are known at this point because of the USE_TOOLS line.
-	// The SUV variable is used implicitly by the SUBST framework, therefore no warning.
-	// The OSV.NetBSD variable is used indirectly because OSV is declared
-	// as being OPSYS-specific, therefore no warning.
-	t.CheckOutputEmpty()
-}
-
-func (s *Suite) Test_MkLines_collectVariables__BUILTIN_FIND_FILES_VAR(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpCommandLine("-Wall,no-space")
-	t.SetUpPackage("category/package")
-	t.CreateFileLines("mk/buildlink3/bsd.builtin.mk",
-		MkCvsID)
-	mklines := t.SetUpFileMkLines("category/package/builtin.mk",
-		MkCvsID,
-		"",
-		"BUILTIN_FIND_FILES_VAR:=        H_XFT2",
-		"BUILTIN_FIND_FILES.H_XFT2=      ${X11BASE}/include/X11/Xft/Xft.h",
-		"",
-		".include \"../../mk/buildlink3/bsd.builtin.mk\"",
-		"",
-		".if ${H_XFT2:N__nonexistent__} && ${H_UNDEF:N__nonexistent__}",
-		".endif")
-	t.FinishSetUp()
-
-	mklines.Check()
-
-	t.CheckOutputLines(
-		"WARN: ~/category/package/builtin.mk:8: H_UNDEF is used but not defined.")
-}
-
-func (s *Suite) Test_MkLines_collectVariables__no_tracing(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.SetUpFileMkLines("filename.mk",
-		MkCvsID,
-		"",
-		"BUILD_DEFS+=\tVAR1",
-		"PLIST_VARS+=\tvar2",
-		"SUBST_VARS.id+=\tVAR3")
-	t.DisableTracing()
-
-	mklines.collectVariables()
-
-	t.CheckOutputEmpty()
-}
-
-func (s *Suite) Test_MkLines_collectUsedVariables__simple(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("filename.mk",
-		"\t${VAR}")
-	mkline := mklines.mklines[0]
-
-	mklines.collectUsedVariables()
-
-	t.CheckDeepEquals(mklines.vars.used, map[string]*MkLine{"VAR": mkline})
-	t.CheckEquals(mklines.vars.FirstUse("VAR"), mkline)
-}
-
-func (s *Suite) Test_MkLines_collectUsedVariables__nested(c *check.C) {
-	t := s.Init(c)
-
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"",
-		"LHS.${lparam}=\tRHS.${rparam}",
-		"",
-		"target:",
-		"\t${outer.${inner}}")
-	assignMkline := mklines.mklines[2]
-	shellMkline := mklines.mklines[5]
-
-	mklines.collectUsedVariables()
-
-	t.CheckEquals(len(mklines.vars.used), 5)
-	t.CheckEquals(mklines.vars.FirstUse("lparam"), assignMkline)
-	t.CheckEquals(mklines.vars.FirstUse("rparam"), assignMkline)
-	t.CheckEquals(mklines.vars.FirstUse("inner"), shellMkline)
-	t.CheckEquals(mklines.vars.FirstUse("outer.*"), shellMkline)
-	t.CheckEquals(mklines.vars.FirstUse("outer.${inner}"), shellMkline)
-}
-
-func (s *Suite) Test_MkLines__private_tool_undefined(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpVartypes()
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"",
-		"\tmd5sum filename")
-
-	mklines.Check()
-
-	t.CheckOutputLines(
-		"WARN: filename.mk:3: Unknown shell command \"md5sum\".")
-}
-
-// Tools that are defined by a package by adding to TOOLS_CREATE can
-// be used without adding them to USE_TOOLS again.
-func (s *Suite) Test_MkLines__private_tool_defined(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpVartypes()
-	mklines := t.NewMkLines("filename.mk",
-		MkCvsID,
-		"TOOLS_CREATE+=\tmd5sum",
-		"",
-		"\tmd5sum filename")
-
-	mklines.Check()
-
-	t.CheckOutputEmpty()
 }
 
 func (s *Suite) Test_MkLines_Check__indentation(c *check.C) {
@@ -852,49 +383,111 @@ func (s *Suite) Test_MkLines_Check__incomplete_subst_at_end(c *check.C) {
 		"WARN: subst.mk:EOF: Incomplete SUBST block: SUBST_SED.class, SUBST_VARS.class or SUBST_FILTER_CMD.class missing.")
 }
 
-// Demonstrates how to define your own make(1) targets for creating
-// files in the current directory. The pkgsrc-wip category Makefile
-// does this, while all other categories don't need any custom code.
-func (s *Suite) Test_MkLines__wip_category_Makefile(c *check.C) {
+func (s *Suite) Test_MkLines_collectRationale(c *check.C) {
 	t := s.Init(c)
 
-	t.SetUpCommandLine("-Wall", "--explain")
-	t.SetUpVartypes()
-	t.SetUpTool("rm", "RM", AtRunTime)
-	t.CreateFileLines("mk/misc/category.mk")
-	mklines := t.SetUpFileMkLines("wip/Makefile",
+	test := func(specs ...string) {
+		lines := mapStr(specs, func(s string) string { return s[4:] })
+		mklines := t.NewMkLines("filename.mk", lines...)
+		mklines.collectRationale()
+		var actual []string
+		mklines.ForEach(func(mkline *MkLine) {
+			actual = append(actual, condStr(mkline.HasRationale(), "R   ", "-   ")+mkline.Text)
+		})
+		t.CheckDeepEquals(actual, specs)
+	}
+
+	// An uncommented line does not have a rationale.
+	test(
+		"-   VAR=value")
+
+	// The rationale can be given at the end of the line.
+	// This is useful for short explanations or remarks.
+	test(
+		"R   VAR=value # rationale")
+
+	// A rationale can be given above a line. This is useful for
+	// explanations that don't fit into a single line.
+	test(
+		"R   # rationale",
+		"R   VAR=value")
+
+	// A commented variable assignment is just that, commented code.
+	// It does not count as a rationale.
+	test(
+		"-   #VAR=value",
+		"-   VAR=value")
+
+	// An empty line ends the rationale. The empty line does have a
+	// rationale itself, but that is useless since pkglint doesn't
+	// check empty lines for rationales.
+	test(
+		"R   # rationale",
+		"R   ",
+		"-   VAR=value")
+
+	// A rationale covers all lines that follow, until the next empty
+	// line.
+	test(
+		"R   # rationale",
+		"R   NOT_FOR_PLATFORM+=\tLinux-*-*",
+		"R   NOT_FOR_PLATFORM+=\tNetBSD-*-*",
+		"R   NOT_FOR_PLATFORM+=\tCygwin-*-*")
+
+	// Large comment blocks often end with an empty comment line.
+	test(
+		"R   # rationale",
+		"R   #",
+		"R   NOT_FOR_PLATFORM+=\tLinux-*-*",
+		"R   NOT_FOR_PLATFORM+=\tNetBSD-*-*",
+		"R   NOT_FOR_PLATFORM+=\tCygwin-*-*")
+
+	// The CVS Id is not a rationale.
+	test(
+		"-   "+MkCvsID,
+		"-   VAR=\tvalue")
+
+	// A rationale at the end of a line applies only to that line.
+	test(
+		"-   VAR=\tvalue",
+		"R   VAR=\tvalue # rationale",
+		"-   VAR=\tvalue")
+}
+
+func (s *Suite) Test_MkLines_collectUsedVariables__simple(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.NewMkLines("filename.mk",
+		"\t${VAR}")
+	mkline := mklines.mklines[0]
+
+	mklines.collectUsedVariables()
+
+	t.CheckDeepEquals(mklines.vars.used, map[string]*MkLine{"VAR": mkline})
+	t.CheckEquals(mklines.vars.FirstUse("VAR"), mkline)
+}
+
+func (s *Suite) Test_MkLines_collectUsedVariables__nested(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.NewMkLines("filename.mk",
 		MkCvsID,
 		"",
-		"COMMENT=\tWIP pkgsrc packages",
+		"LHS.${lparam}=\tRHS.${rparam}",
 		"",
-		"SUBDIR+=\taaa",
-		"SUBDIR+=\tzzz",
-		"",
-		"${.CURDIR}/PKGDB:",
-		"\t${RM} -f ${.CURDIR}/PKGDB",
-		"",
-		"${.CURDIR}/INDEX:",
-		"\t${RM} -f ${.CURDIR}/INDEX",
-		"",
-		"clean-tmpdir:",
-		"\t${RUN} rm -rf tmpdir",
-		"",
-		".include \"../mk/misc/category.mk\"")
+		"target:",
+		"\t${outer.${inner}}")
+	assignMkline := mklines.mklines[2]
+	shellMkline := mklines.mklines[5]
 
-	mklines.Check()
+	mklines.collectUsedVariables()
 
-	t.CheckOutputLines(
-		"WARN: ~/wip/Makefile:14: Undeclared target \"clean-tmpdir\".",
-		"",
-		"\tTo define a custom target in a package, declare it like this:",
-		"",
-		"\t\t.PHONY: my-target",
-		"",
-		"\tTo define a custom target that creates a file (should be rarely",
-		"\tneeded), declare it like this:",
-		"",
-		"\t\t${.CURDIR}/my-file:",
-		"")
+	t.CheckEquals(len(mklines.vars.used), 5)
+	t.CheckEquals(mklines.vars.FirstUse("lparam"), assignMkline)
+	t.CheckEquals(mklines.vars.FirstUse("rparam"), assignMkline)
+	t.CheckEquals(mklines.vars.FirstUse("inner"), shellMkline)
+	t.CheckEquals(mklines.vars.FirstUse("outer.*"), shellMkline)
+	t.CheckEquals(mklines.vars.FirstUse("outer.${inner}"), shellMkline)
 }
 
 func (s *Suite) Test_MkLines_collectDocumentedVariables(c *check.C) {
@@ -961,26 +554,195 @@ func (s *Suite) Test_MkLines_collectDocumentedVariables(c *check.C) {
 	t.CheckDeepEquals(varnames, expected)
 }
 
-func (s *Suite) Test_MkLines__shell_command_indentation(c *check.C) {
+func (s *Suite) Test_MkLines_collectVariables(c *check.C) {
 	t := s.Init(c)
 
-	t.SetUpVartypes()
-	mklines := t.NewMkLines("Makefile",
+	t.SetUpCommandLine("-Wall,no-space")
+	t.SetUpPkgsrc()
+	t.CreateFileLines("mk/tools/defaults.mk",
+		"USE_TOOLS+=     autoconf autoconf213")
+	mklines := t.NewMkLines("determine-defined-variables.mk",
 		MkCvsID,
-		"#",
+		"",
+		"USE_TOOLS+=             autoconf213 autoconf",
+		"",
+		"OPSYSVARS+=             OSV",
+		"OSV.NetBSD=             NetBSD-specific value",
+		"",
+		"SUBST_CLASSES+=         subst",
+		"SUBST_STAGE.subst=      pre-configure",
+		"SUBST_FILES.subst=      file",
+		"SUBST_VARS.subst=       SUV",
+		"SUV=                    value for substitution",
+		"",
+		"#BUILD_DEFS+=           VARBASE",
+		"",
 		"pre-configure:",
-		"\tcd 'indented correctly'",
-		"\t\tcd 'indented needlessly'",
-		"\tcd 'indented correctly' \\",
-		"\t\t&& cd 'with indented continuation'")
+		"\t${RUN} autoreconf; autoheader-2.13",
+		"\t${ECHO} ${OSV:Q}")
+	t.FinishSetUp()
+
+	mklines.Check()
+
+	// The tools autoreconf and autoheader213 are known at this point because of the USE_TOOLS line.
+	// The SUV variable is used implicitly by the SUBST framework, therefore no warning.
+	// The OSV.NetBSD variable is used indirectly because OSV is declared
+	// as being OPSYS-specific, therefore no warning.
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_MkLines_collectVariables__BUILTIN_FIND_FILES_VAR(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("-Wall,no-space")
+	t.SetUpPackage("category/package")
+	t.CreateFileLines("mk/buildlink3/bsd.builtin.mk",
+		MkCvsID)
+	mklines := t.SetUpFileMkLines("category/package/builtin.mk",
+		MkCvsID,
+		"",
+		"BUILTIN_FIND_FILES_VAR:=        H_XFT2",
+		"BUILTIN_FIND_FILES.H_XFT2=      ${X11BASE}/include/X11/Xft/Xft.h",
+		"",
+		".include \"../../mk/buildlink3/bsd.builtin.mk\"",
+		"",
+		".if ${H_XFT2:N__nonexistent__} && ${H_UNDEF:N__nonexistent__}",
+		".endif")
+	t.FinishSetUp()
 
 	mklines.Check()
 
 	t.CheckOutputLines(
-		"NOTE: Makefile:5: Shell programs should be indented with a single tab.")
+		"WARN: ~/category/package/builtin.mk:8: H_UNDEF is used but not defined.")
 }
 
-func (s *Suite) Test_MkLines__unknown_options(c *check.C) {
+func (s *Suite) Test_MkLines_collectVariables__no_tracing(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.SetUpFileMkLines("filename.mk",
+		MkCvsID,
+		"",
+		"BUILD_DEFS+=\tVAR1",
+		"PLIST_VARS+=\tvar2",
+		"SUBST_VARS.id+=\tVAR3")
+	t.DisableTracing()
+
+	mklines.collectVariables()
+
+	t.CheckOutputEmpty()
+}
+
+// Ensures that during MkLines.ForEach, the conditional variables in
+// MkLines.Indentation are correctly updated for each line.
+func (s *Suite) Test_MkLines_ForEach__conditional_variables(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("-Wall,no-space")
+	t.SetUpVartypes()
+	mklines := t.NewMkLines("conditional.mk",
+		MkCvsID,
+		"",
+		".if defined(PKG_DEVELOPER)",
+		"DEVELOPER=\tyes",
+		".endif",
+		"",
+		".if ${USE_TOOLS:Mgettext}",
+		"USES_GETTEXT=\tyes",
+		".endif")
+
+	seenDeveloper := false
+	seenUsesGettext := false
+
+	mklines.ForEach(func(mkline *MkLine) {
+		if mkline.IsVarassign() {
+			switch mkline.Varname() {
+			case "DEVELOPER":
+				t.CheckEquals(mklines.indentation.IsConditional(), true)
+				seenDeveloper = true
+			case "USES_GETTEXT":
+				t.CheckEquals(mklines.indentation.IsConditional(), true)
+				seenUsesGettext = true
+			}
+		}
+	})
+
+	t.CheckEquals(seenDeveloper, true)
+	t.CheckEquals(seenUsesGettext, true)
+}
+
+func (s *Suite) Test_MkLines_collectElse(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("-Wno-space")
+	t.SetUpVartypes()
+
+	mklines := t.NewMkLines("module.mk",
+		MkCvsID,
+		"",
+		".if 0",
+		".endif",
+		"",
+		".if 0",
+		".else",
+		".endif",
+		"",
+		".if 0",
+		".elif 0",
+		".endif")
+
+	mklines.collectElse()
+
+	t.CheckEquals(mklines.mklines[2].HasElseBranch(), false)
+	t.CheckEquals(mklines.mklines[5].HasElseBranch(), true)
+	t.CheckEquals(mklines.mklines[9].HasElseBranch(), false)
+}
+
+// Demonstrates how to define your own make(1) targets for creating
+// files in the current directory. The pkgsrc-wip category Makefile
+// does this, while all other categories don't need any custom code.
+func (s *Suite) Test_MkLines_checkAll__wip_category_Makefile(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("-Wall", "--explain")
+	t.SetUpVartypes()
+	t.SetUpTool("rm", "RM", AtRunTime)
+	t.CreateFileLines("mk/misc/category.mk")
+	mklines := t.SetUpFileMkLines("wip/Makefile",
+		MkCvsID,
+		"",
+		"COMMENT=\tWIP pkgsrc packages",
+		"",
+		"SUBDIR+=\taaa",
+		"SUBDIR+=\tzzz",
+		"",
+		"${.CURDIR}/PKGDB:",
+		"\t${RM} -f ${.CURDIR}/PKGDB",
+		"",
+		"${.CURDIR}/INDEX:",
+		"\t${RM} -f ${.CURDIR}/INDEX",
+		"",
+		"clean-tmpdir:",
+		"\t${RUN} rm -rf tmpdir",
+		"",
+		".include \"../mk/misc/category.mk\"")
+
+	mklines.Check()
+
+	t.CheckOutputLines(
+		"WARN: ~/wip/Makefile:14: Undeclared target \"clean-tmpdir\".",
+		"",
+		"\tTo define a custom target in a package, declare it like this:",
+		"",
+		"\t\t.PHONY: my-target",
+		"",
+		"\tTo define a custom target that creates a file (should be rarely",
+		"\tneeded), declare it like this:",
+		"",
+		"\t\t${.CURDIR}/my-file:",
+		"")
+}
+
+func (s *Suite) Test_MkLines_checkAll__unknown_options(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -998,7 +760,7 @@ func (s *Suite) Test_MkLines__unknown_options(c *check.C) {
 		"WARN: options.mk:4: Unknown option \"unknown\".")
 }
 
-func (s *Suite) Test_MkLines_Check__PLIST_VARS(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__PLIST_VARS(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wno-space")
@@ -1034,7 +796,7 @@ func (s *Suite) Test_MkLines_Check__PLIST_VARS(c *check.C) {
 		"WARN: ~/category/package/options.mk:16: PLIST.only-defined is defined, but \"only-defined\" is not added to PLIST_VARS in this file.")
 }
 
-func (s *Suite) Test_MkLines_Check__PLIST_VARS_indirect(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__PLIST_VARS_indirect(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wno-space")
@@ -1070,7 +832,7 @@ func (s *Suite) Test_MkLines_Check__PLIST_VARS_indirect(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
-func (s *Suite) Test_MkLines_Check__PLIST_VARS_indirect_2(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__PLIST_VARS_indirect_2(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wno-space")
@@ -1097,34 +859,7 @@ func (s *Suite) Test_MkLines_Check__PLIST_VARS_indirect_2(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
-func (s *Suite) Test_MkLines_collectElse(c *check.C) {
-	t := s.Init(c)
-
-	t.SetUpCommandLine("-Wno-space")
-	t.SetUpVartypes()
-
-	mklines := t.NewMkLines("module.mk",
-		MkCvsID,
-		"",
-		".if 0",
-		".endif",
-		"",
-		".if 0",
-		".else",
-		".endif",
-		"",
-		".if 0",
-		".elif 0",
-		".endif")
-
-	mklines.collectElse()
-
-	t.CheckEquals(mklines.mklines[2].HasElseBranch(), false)
-	t.CheckEquals(mklines.mklines[5].HasElseBranch(), true)
-	t.CheckEquals(mklines.mklines[9].HasElseBranch(), false)
-}
-
-func (s *Suite) Test_MkLines_Check__defined_and_used_variables(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__defined_and_used_variables(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wno-space")
@@ -1151,7 +886,7 @@ func (s *Suite) Test_MkLines_Check__defined_and_used_variables(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
-func (s *Suite) Test_MkLines_Check__hacks_mk(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__hacks_mk(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wall,no-space")
@@ -1169,7 +904,7 @@ func (s *Suite) Test_MkLines_Check__hacks_mk(c *check.C) {
 	t.CheckOutputEmpty()
 }
 
-func (s *Suite) Test_MkLines_Check__MASTER_SITE_in_HOMEPAGE(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__MASTER_SITE_in_HOMEPAGE(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpMasterSite("MASTER_SITE_GITHUB", "https://github.com/")
@@ -1194,11 +929,11 @@ func (s *Suite) Test_MkLines_Check__MASTER_SITE_in_HOMEPAGE(c *check.C) {
 
 // Up to June 2019, pkglint wrongly replaced the HOMEPAGE
 // with an empty string.
-func (s *Suite) Test_MkLines_Check__autofix_MASTER_SITE_in_HOMEPAGE(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__autofix_MASTER_SITE_in_HOMEPAGE(c *check.C) {
 	t := s.Init(c)
 
 	test := func(diagnostics ...string) {
-		mklines := t.NewMkLines("Makefile",
+		mklines := t.SetUpFileMkLines("Makefile",
 			MkCvsID,
 			"",
 			"MASTER_SITES= \\",
@@ -1213,6 +948,7 @@ func (s *Suite) Test_MkLines_Check__autofix_MASTER_SITE_in_HOMEPAGE(c *check.C) 
 	}
 
 	t.SetUpVartypes()
+	t.Chdir(".")
 
 	t.SetUpCommandLine("-Wall")
 	test(
@@ -1224,7 +960,7 @@ func (s *Suite) Test_MkLines_Check__autofix_MASTER_SITE_in_HOMEPAGE(c *check.C) 
 
 }
 
-func (s *Suite) Test_MkLines_Check__autofix_MASTER_SITE_in_HOMEPAGE_in_package(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__autofix_MASTER_SITE_in_HOMEPAGE_in_package(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpPackage("category/package",
@@ -1248,7 +984,7 @@ func (s *Suite) Test_MkLines_Check__autofix_MASTER_SITE_in_HOMEPAGE_in_package(c
 			"with \"https://cdn1.example.org/\".")
 }
 
-func (s *Suite) Test_MkLines_Check__VERSION_as_word_part_in_MASTER_SITES(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__VERSION_as_word_part_in_MASTER_SITES(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -1265,7 +1001,7 @@ func (s *Suite) Test_MkLines_Check__VERSION_as_word_part_in_MASTER_SITES(c *chec
 		"WARN: geography/viking/Makefile:2: VERSION is used but not defined.")
 }
 
-func (s *Suite) Test_MkLines_Check__shell_command_as_word_part_in_ENV_list(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__shell_command_as_word_part_in_ENV_list(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpVartypes()
@@ -1279,7 +1015,7 @@ func (s *Suite) Test_MkLines_Check__shell_command_as_word_part_in_ENV_list(c *ch
 		"WARN: x11/lablgtk1/Makefile:2: Please use ${CC:Q} instead of ${CC}.")
 }
 
-func (s *Suite) Test_MkLines_Check__extra_warnings(c *check.C) {
+func (s *Suite) Test_MkLines_checkAll__extra_warnings(c *check.C) {
 	t := s.Init(c)
 
 	t.SetUpCommandLine("-Wextra")
@@ -1305,6 +1041,224 @@ func (s *Suite) Test_MkLines_Check__extra_warnings(c *check.C) {
 		"WARN: options.mk:7: Please include \"../../mk/bsd.prefs.mk\" before using \"?=\".",
 		"WARN: options.mk:11: Building the package should take place entirely inside ${WRKSRC}, not \"${WRKSRC}/..\".",
 		"NOTE: options.mk:11: You can use \"../build\" instead of \"${WRKSRC}/../build\".")
+}
+
+// At 2018-12-02, pkglint had resolved ${MY_PLIST_VARS} into a single word,
+// whereas the correct behavior is to resolve it into two words.
+// It had produced warnings about mismatched PLIST_VARS IDs.
+func (s *Suite) Test_MkLines_checkVarassignPlist__indirect(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpVartypes()
+	mklines := t.SetUpFileMkLines("plist.mk",
+		MkCvsID,
+		"",
+		"MY_PLIST_VARS=\tvar1 var2",
+		"PLIST_VARS+=\t${MY_PLIST_VARS}",
+		"",
+		"PLIST.var1=\tyes",
+		"PLIST.var2=\tyes")
+
+	mklines.Check()
+
+	t.CheckOutputEmpty()
+}
+
+func (s *Suite) Test_MkLines_CheckUsedBy__show_autofix(c *check.C) {
+	t := s.Init(c)
+
+	t.SetUpCommandLine("--show-autofix")
+
+	test := func(pkgpath Path, lines []string, diagnostics []string) {
+		mklines := t.NewMkLines("Makefile.common", lines...)
+
+		mklines.CheckUsedBy(pkgpath)
+
+		t.CheckOutput(diagnostics)
+	}
+
+	lines := func(lines ...string) []string { return lines }
+	diagnostics := func(diagnostics ...string) []string { return diagnostics }
+
+	// This file is too short to be checked.
+	test(
+		"category/package",
+		lines(),
+		diagnostics())
+
+	// Still too short.
+	test(
+		"category/package",
+		lines(
+			MkCvsID),
+		diagnostics())
+
+	// Still too short.
+	test(
+		"category/package",
+		lines(
+			MkCvsID,
+			""),
+		diagnostics())
+
+	// This file is correctly mentioned.
+	test(
+		"sysutils/mc",
+		lines(
+			MkCvsID,
+			"",
+			"# used by sysutils/mc"),
+		diagnostics())
+
+	// This file is not correctly mentioned, therefore the line is inserted.
+	test(
+		"category/package",
+		lines(
+			MkCvsID,
+			"",
+			"VARNAME=\tvalue"),
+		diagnostics(
+			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here.",
+			"AUTOFIX: Makefile.common:1: Inserting a line \"# used by category/package\" after this line."))
+
+	// The "used by" comments may either start in line 2 or in line 3.
+	test(
+		"category/package",
+		lines(
+			MkCvsID,
+			"#",
+			"#"),
+		diagnostics(
+			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here.",
+			"AUTOFIX: Makefile.common:1: Inserting a line \"# used by category/package\" after this line."))
+
+	// TODO: What if there is an introductory comment first? That should stay at the top of the file.
+	// TODO: What if the "used by" comments appear in the second paragraph, preceded by only comments and empty lines?
+
+	// Since the first paragraph already has some comments, the "used by"
+	// comments need their separate paragraph, which is inserted after
+	// the first paragraph.
+	test("category/package",
+		lines(
+			MkCvsID,
+			"# A normal comment",
+			"# that spans",
+			"# several lines"),
+		diagnostics(
+			"AUTOFIX: Makefile.common:4: Inserting a line \"\" after this line.",
+			"WARN: Makefile.common:4: Please add a line \"# used by category/package\" here.",
+			"AUTOFIX: Makefile.common:4: Inserting a line \"# used by category/package\" after this line."))
+
+	t.CheckEquals(G.Logger.autofixAvailable, true)
+}
+
+func (s *Suite) Test_MkLines_CheckUsedBy(c *check.C) {
+	t := s.Init(c)
+
+	test := func(pkgpath Path, lines []string, diagnostics []string) {
+		mklines := t.NewMkLines("Makefile.common", lines...)
+
+		mklines.CheckUsedBy(pkgpath)
+
+		t.CheckOutput(diagnostics)
+	}
+
+	lines := func(lines ...string) []string { return lines }
+	diagnostics := func(diagnostics ...string) []string { return diagnostics }
+
+	// The including package is already mentioned in the single "used by"
+	// paragraph. Nothing needs to be changed.
+	test("category/package2/Makefile",
+		lines(
+			MkCvsID,
+			"# This Makefile fragment is",
+			"# used by category/package1/Makefile, as well as", // looks similar to the formal "used by".
+			"# some others.",
+			"",
+			"# used by category/package2/Makefile"),
+		diagnostics())
+
+	// The including file is not yet mentioned. There is a single "used by"
+	// paragraph, and the including file needs to be added to that paragraph.
+	// It is added in the correct sorting order. The entries are simply
+	// sorted alphabetically.
+	test("category/package/Makefile",
+		lines(
+			MkCvsID,
+			"# This Makefile fragment is",
+			"# used by category/package1/Makefile, as well as", // looks similar to the formal "used by".
+			"# some others.",
+			"",
+			"# used by category/package2/Makefile"),
+		diagnostics(
+			"WARN: Makefile.common:6: Please add a line \"# used by category/package/Makefile\" here."))
+
+	// There are two separate paragraphs with "used by" lines. The first of
+	// them is the interesting one. The new line is added to the first paragraph.
+	test("category/package",
+		lines(
+			MkCvsID,
+			"# used by category/package1",
+			"",
+			"# used by category/package2"),
+		diagnostics(
+			"WARN: Makefile.common:4: There should only be a single \"used by\" paragraph per file.",
+			"WARN: Makefile.common:2: Please add a line \"# used by category/package\" here."))
+
+	// The empty comment also separates the two paragraphs, like in the
+	// previous test case.
+	test("category/package",
+		lines(
+			MkCvsID,
+			"# used by category/package1",
+			"#",
+			"# used by category/package2"),
+		diagnostics(
+			"WARN: Makefile.common:4: There should only be a single \"used by\" paragraph per file.",
+			"WARN: Makefile.common:2: Please add a line \"# used by category/package\" here."))
+
+	// Code coverage for hasOther being true and conflict being non-nil.
+	// Ensures that the warning is printed in the first wrong line.
+	test("category/package",
+		lines(
+			MkCvsID,
+			"",
+			"# Unrelated comment.",
+			"# used by category/package1",
+			"# used by category/package2"),
+		diagnostics(
+			"WARN: Makefile.common:4: The \"used by\" lines should be in a separate paragraph.",
+			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here."))
+
+	// Code coverage for hasUsedBy being true and conflict being non-nil.
+	// Ensures that the warning is printed in the first wrong line.
+	test("category/package",
+		lines(
+			MkCvsID,
+			"",
+			"# used by category/package1",
+			"# Unrelated comment.",
+			"# Unrelated comment 2."),
+		diagnostics(
+			"WARN: Makefile.common:4: The \"used by\" lines should be in a separate paragraph.",
+			"WARN: Makefile.common:1: Please add a line \"# used by category/package\" here."))
+
+	t.CheckEquals(G.Logger.autofixAvailable, true)
+}
+
+func (s *Suite) Test_MkLines_CheckUsedBy__separate_paragraph(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.NewMkLines("Makefile.common",
+		MkCvsID,
+		"# a comment",
+		"# used by category/package",
+		"# a comment")
+
+	mklines.CheckUsedBy("category/package")
+
+	t.CheckOutputLines(
+		"WARN: Makefile.common:3: The \"used by\" lines should be in a separate paragraph.")
 }
 
 func (s *Suite) Test_MkLines_SplitToParagraphs(c *check.C) {
@@ -1374,61 +1328,76 @@ func (s *Suite) Test_MkLines_SplitToParagraphs(c *check.C) {
 		para(0, 4))
 }
 
-// Ensures that during MkLines.ForEach, the conditional variables in
-// MkLines.Indentation are correctly updated for each line.
-func (s *Suite) Test_MkLines_ForEach__conditional_variables(c *check.C) {
+func (s *Suite) Test_MkLines_ExpandLoopVar(c *check.C) {
 	t := s.Init(c)
 
-	t.SetUpCommandLine("-Wall,no-space")
-	t.SetUpVartypes()
-	mklines := t.NewMkLines("conditional.mk",
+	mklines := t.NewMkLines("filename.mk",
 		MkCvsID,
 		"",
-		".if defined(PKG_DEVELOPER)",
-		"DEVELOPER=\tyes",
-		".endif",
-		"",
-		".if ${USE_TOOLS:Mgettext}",
-		"USES_GETTEXT=\tyes",
-		".endif")
+		".for file in a b c d e f g h",
+		".  for rank in 1 2 3 4 5 6 7 8",
+		"CHESS_BOARD+=\t${file}${rank}",
+		".  endfor",
+		".endfor")
 
-	seenDeveloper := false
-	seenUsesGettext := false
-
+	var files []string
+	var ranks []string
+	var diagonals []string
 	mklines.ForEach(func(mkline *MkLine) {
 		if mkline.IsVarassign() {
-			switch mkline.Varname() {
-			case "DEVELOPER":
-				t.CheckEquals(mklines.indentation.IsConditional(), true)
-				seenDeveloper = true
-			case "USES_GETTEXT":
-				t.CheckEquals(mklines.indentation.IsConditional(), true)
-				seenUsesGettext = true
-			}
+			ranks = mklines.ExpandLoopVar("rank")
+			files = mklines.ExpandLoopVar("file")
+			diagonals = mklines.ExpandLoopVar("diagonals")
 		}
 	})
 
-	t.CheckEquals(seenDeveloper, true)
-	t.CheckEquals(seenUsesGettext, true)
+	t.CheckDeepEquals(files, strings.Split("abcdefgh", ""))
+	t.CheckDeepEquals(ranks, strings.Split("12345678", ""))
+	t.Check(diagonals, check.HasLen, 0)
 }
 
-// At 2018-12-02, pkglint had resolved ${MY_PLIST_VARS} into a single word,
-// whereas the correct behavior is to resolve it into two words.
-// It had produced warnings about mismatched PLIST_VARS IDs.
-func (s *Suite) Test_MkLines_checkVarassignPlist__indirect(c *check.C) {
+func (s *Suite) Test_MkLines_ExpandLoopVar__multi(c *check.C) {
 	t := s.Init(c)
 
-	t.SetUpVartypes()
-	mklines := t.SetUpFileMkLines("plist.mk",
+	mklines := t.NewMkLines("filename.mk",
 		MkCvsID,
 		"",
-		"MY_PLIST_VARS=\tvar1 var2",
-		"PLIST_VARS+=\t${MY_PLIST_VARS}",
+		".if 1",
+		".  for key value in 1 one 2 two 3 three",
+		"VAR.${key}=\t${value}",
+		".  endfor",
+		".endif")
+
+	var keys []string
+	var values []string
+	mklines.ForEach(func(mkline *MkLine) {
+		if mkline.IsVarassign() {
+			keys = mklines.ExpandLoopVar("key")
+			values = mklines.ExpandLoopVar("value")
+		}
+	})
+
+	// As of June 2019, multi-variable .for loops are not yet implemented.
+	t.Check(keys, check.HasLen, 0)
+	t.Check(values, check.HasLen, 0)
+}
+
+func (s *Suite) Test_MkLines_ExpandLoopVar__malformed_for(c *check.C) {
+	t := s.Init(c)
+
+	mklines := t.NewMkLines("filename.mk",
+		MkCvsID,
 		"",
-		"PLIST.var1=\tyes",
-		"PLIST.var2=\tyes")
+		".for var in",
+		"VAR=\t${var}",
+		".endfor")
 
-	mklines.Check()
+	var values = []string{"uninitialized"}
+	mklines.ForEach(func(mkline *MkLine) {
+		if mkline.IsVarassign() {
+			values = mklines.ExpandLoopVar("key")
+		}
+	})
 
-	t.CheckOutputEmpty()
+	t.Check(values, check.HasLen, 0)
 }

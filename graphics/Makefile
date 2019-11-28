@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.858 2019/11/10 20:11:30 maya Exp $
+# $NetBSD: Makefile,v 1.866 2019/11/26 21:08:58 minskim Exp $
 #
 
 COMMENT=	Graphics tools and libraries
@@ -180,7 +180,6 @@ SUBDIR+=	gimp-refocus-it
 SUBDIR+=	gimp-resynthesizer
 SUBDIR+=	gimp-ufraw
 SUBDIR+=	gimp-warp-sharp
-SUBDIR+=	gimp-webp
 SUBDIR+=	gimp2-wideangle
 SUBDIR+=	giram
 SUBDIR+=	girara
@@ -282,11 +281,10 @@ SUBDIR+=	kipi-plugins
 SUBDIR+=	kolourpaint
 SUBDIR+=	koverartist
 SUBDIR+=	kplotting
+SUBDIR+=	kqtquickcharts
 SUBDIR+=	kqtquickcharts4
 SUBDIR+=	krita
 SUBDIR+=	kruler
-SUBDIR+=	ksaneplugin
-SUBDIR+=	ksnapshot
 SUBDIR+=	lasem
 SUBDIR+=	lcms
 SUBDIR+=	lcms2
@@ -319,7 +317,7 @@ SUBDIR+=	libiptcdata
 SUBDIR+=	libjpeg-turbo
 SUBDIR+=	libkdcraw
 SUBDIR+=	libkexiv2
-SUBDIR+=	libkface
+SUBDIR+=	libkexiv2-kde4
 SUBDIR+=	libkipi
 SUBDIR+=	libksane
 SUBDIR+=	liblqr
@@ -472,6 +470,7 @@ SUBDIR+=	py-imagesize
 SUBDIR+=	py-imaging
 SUBDIR+=	py-leather
 SUBDIR+=	py-matplotlib
+SUBDIR+=	py-matplotlib-venn
 SUBDIR+=	py-mcomix
 SUBDIR+=	py-nwdiag
 SUBDIR+=	py-objgraph
@@ -536,6 +535,7 @@ SUBDIR+=	simage
 SUBDIR+=	skencil
 SUBDIR+=	slim-themes
 SUBDIR+=	spcaview
+SUBDIR+=	spectacle
 SUBDIR+=	svgpart
 SUBDIR+=	sxiv
 SUBDIR+=	tango-icon-theme

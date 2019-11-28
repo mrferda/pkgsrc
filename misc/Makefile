@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.519 2019/11/11 09:38:49 markd Exp $
+# $NetBSD: Makefile,v 1.524 2019/11/22 23:30:32 jperkin Exp $
 #
 
 COMMENT=	Miscellaneous utilities
@@ -126,8 +126,10 @@ SUBDIR+=	kbruch
 SUBDIR+=	kcharselect
 SUBDIR+=	kchmviewer
 SUBDIR+=	kcontacts
+SUBDIR+=	kdav
 SUBDIR+=	kde-wallpapers4
 SUBDIR+=	kdeartwork4
+SUBDIR+=	kdeedu-data
 SUBDIR+=	kdepim-runtime4
 SUBDIR+=	kdepim4
 SUBDIR+=	kdepimlibs4
@@ -136,6 +138,7 @@ SUBDIR+=	kdrill
 SUBDIR+=	kemoticons
 SUBDIR+=	kgeography
 SUBDIR+=	khard
+SUBDIR+=	kidentitymanagement
 SUBDIR+=	kig
 SUBDIR+=	kiten
 SUBDIR+=	klettres
@@ -160,6 +163,7 @@ SUBDIR+=	libcdio
 SUBDIR+=	libcdio-paranoia
 SUBDIR+=	libcec
 SUBDIR+=	libkdeedu
+SUBDIR+=	libkeduvocdocument
 SUBDIR+=	libkgeomap
 SUBDIR+=	libkkc-data
 SUBDIR+=	libkvkontakte
@@ -361,6 +365,7 @@ SUBDIR+=	vimpager
 SUBDIR+=	visual-regexp
 SUBDIR+=	vttest
 SUBDIR+=	vym
+SUBDIR+=	wandio
 SUBDIR+=	watch
 SUBDIR+=	wdic
 SUBDIR+=	wemux

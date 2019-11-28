@@ -28,10 +28,12 @@ func (p MkLineParser) Parse(line *Line) *MkLine {
 	// at the end of the line.
 	if hasPrefix(text, "\t") {
 		lex := textproc.NewLexer(text)
-		for lex.SkipByte('\t') {
-		}
+		lex.SkipHspace()
 
 		splitResult := p.split(line, lex.Rest(), false)
+		if lex.PeekByte() == '#' {
+			return p.parseCommentOrEmpty(line, p.split(line, lex.Rest(), true))
+		}
 		return p.parseShellcmd(line, splitResult)
 	}
 
@@ -83,6 +85,7 @@ func (p MkLineParser) parseVarassign(line *Line, text string, splitResult mkLine
 			fix.Notef("Unnecessary space after variable name %q.", varname)
 			fix.Replace(varname+a.spaceAfterVarname+op.String(), varname+op.String())
 			fix.Apply()
+			// FIXME: Preserve the alignment of the variable value.
 		}
 	}
 
@@ -245,7 +248,7 @@ func (p MkLineParser) parseSysinclude(line *Line, splitResult mkLineSplitResult)
 		return nil
 	}
 
-	return &MkLine{line, splitResult, &mkLineInclude{directive == "include", true, indent, includedFile, nil}}
+	return &MkLine{line, splitResult, &mkLineInclude{directive == "include", true, indent, NewPath(includedFile), nil}}
 }
 
 func (p MkLineParser) parseDependency(line *Line, splitResult mkLineSplitResult) *MkLine {
@@ -297,7 +300,7 @@ func (MkLineParser) split(line *Line, text string, trimComment bool) mkLineSplit
 		mainWithSpaces = text
 	}
 
-	parser := NewMkParser(line, mainWithSpaces)
+	parser := NewMkLexer(mainWithSpaces, line)
 	lexer := parser.lexer
 
 	parseOther := func() string {

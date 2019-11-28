@@ -131,9 +131,8 @@ func Test(t *testing.T) {
 	check.TestingT(t)
 }
 
-func (s *Suite) Test__test_names(c *check.C) {
-	ck := intqa.NewTestNameChecker(c)
-	ck.IgnoreFiles("*yacc.go")
-	ck.ShowWarnings(false)
+func (s *Suite) Test__qa(c *check.C) {
+	ck := intqa.NewQAChecker(c.Errorf)
+	ck.Configure("*", "*", "*", -intqa.EMissingTest)
 	ck.Check()
 }

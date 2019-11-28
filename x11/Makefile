@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.861 2019/11/05 14:58:43 adam Exp $
+# $NetBSD: Makefile,v 1.867 2019/11/26 09:07:16 wiz Exp $
 #
 
 COMMENT=	Packages to support the X window system
@@ -52,7 +52,6 @@ SUBDIR+=	elementary
 SUBDIR+=	elementary-icon-theme
 SUBDIR+=	enlightenment
 SUBDIR+=	eterm
-SUBDIR+=	evieext
 SUBDIR+=	fast-user-switch-applet
 SUBDIR+=	fbdesk
 SUBDIR+=	filerunner
@@ -216,7 +215,6 @@ SUBDIR+=	libXcomposite
 SUBDIR+=	libXcursor
 SUBDIR+=	libXdamage
 SUBDIR+=	libXdmcp
-SUBDIR+=	libXevie
 SUBDIR+=	libXext
 SUBDIR+=	libXfixes
 SUBDIR+=	libXfont
@@ -235,10 +233,8 @@ SUBDIR+=	libXtst
 SUBDIR+=	libXv
 SUBDIR+=	libXvMC
 SUBDIR+=	libXxf86dga
-SUBDIR+=	libXxf86misc
 SUBDIR+=	libXxf86vm
 SUBDIR+=	libdesktop-agnostic
-SUBDIR+=	libdmx
 SUBDIR+=	libdrm
 SUBDIR+=	libfakekey
 SUBDIR+=	libgnomekbd
@@ -255,7 +251,6 @@ SUBDIR+=	libxfce4ui
 SUBDIR+=	libxfce4util
 SUBDIR+=	libxkbcommon
 SUBDIR+=	libxkbfile
-SUBDIR+=	libxkbui
 SUBDIR+=	libxklavier
 SUBDIR+=	libxshmfence
 SUBDIR+=	listres
@@ -585,7 +580,6 @@ SUBDIR+=	xfontsel
 SUBDIR+=	xforms
 SUBDIR+=	xfsinfo
 SUBDIR+=	xfstt
-SUBDIR+=	xfwp
 SUBDIR+=	xgamma
 SUBDIR+=	xgas
 SUBDIR+=	xgrk
@@ -650,7 +644,6 @@ SUBDIR+=	xrdb
 SUBDIR+=	xrefresh
 SUBDIR+=	xrestop
 SUBDIR+=	xrootconsole
-SUBDIR+=	xrx
 SUBDIR+=	xscope
 SUBDIR+=	xscreensaver
 SUBDIR+=	xscreensaver-demo
