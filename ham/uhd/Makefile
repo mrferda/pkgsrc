@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.52 2020/01/12 20:20:26 ryoon Exp $
+# $NetBSD: Makefile,v 1.54 2020/04/07 15:57:02 mef Exp $
 
-DISTNAME=	uhd-3.14.1.1
-PKGREVISION=	1
+DISTNAME=	uhd-3.15.0.0
 CATEGORIES=	ham
 MASTER_SITES=	${MASTER_SITE_GITHUB:=EttusResearch/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -55,6 +54,7 @@ REPLACE_PYTHON+=	tests/devtest/rx_samples_to_file_test.py
 REPLACE_PYTHON+=	tests/devtest/test_messages_test.py
 REPLACE_PYTHON+=	tests/devtest/test_pps_test.py
 REPLACE_PYTHON+=	tests/devtest/tx_bursts_test.py
+REPLACE_PYTHON+=	tests/devtest/tx_waveforms_test.py
 REPLACE_PYTHON+=	tests/devtest/uhd_test_base.py
 REPLACE_PYTHON+=	tests/devtest/usrp_probe.py
 REPLACE_PYTHON+=	tests/devtest/usrp_probe_test.py
