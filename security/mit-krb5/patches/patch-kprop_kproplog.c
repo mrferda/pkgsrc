@@ -1,10 +1,10 @@
-$NetBSD: patch-slave_kproplog.c,v 1.1 2018/07/16 10:26:40 jperkin Exp $
+$NetBSD: patch-kprop_kproplog.c,v 1.1 2020/04/09 10:57:49 adam Exp $
 
 Fix mmap -Werror=incompatible-pointer-types.
 
---- slave/kproplog.c.orig	2018-05-03 14:34:47.000000000 +0000
-+++ slave/kproplog.c
-@@ -429,7 +429,7 @@ map_ulog(const char *filename)
+--- kprop/kproplog.c.orig	2020-04-09 08:50:26.000000000 +0000
++++ kprop/kproplog.c
+@@ -412,7 +412,7 @@ map_ulog(const char *filename)
          return NULL;
      if (fstat(fd, &st) < 0)
          return NULL;
