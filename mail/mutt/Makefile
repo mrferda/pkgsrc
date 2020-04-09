@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.224 2020/03/08 16:50:24 wiz Exp $
+# $NetBSD: Makefile,v 1.226 2020/04/08 08:40:00 rhialto Exp $
 
 DISTNAME=		mutt-1.13.4
-PKGREVISION=		1
+PKGREVISION=		2
 CATEGORIES=		mail
 MASTER_SITES=		ftp://ftp.mutt.org/pub/mutt/
 
@@ -12,8 +12,6 @@ LICENSE=		gnu-gpl-v2 OR gnu-gpl-v3 # or newer
 
 BUILD_DEPENDS+=		docbook-xsl-[0-9]*:../../textproc/docbook-xsl
 BUILD_DEPENDS+=		lynx-[0-9]*:../../www/lynx
-
-CONFLICTS+=		neomutt-[0-9]*
 
 .include "../../mk/bsd.prefs.mk"
 

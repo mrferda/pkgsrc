@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.104 2020/03/18 11:49:21 leot Exp $
+# $NetBSD: Makefile,v 1.106 2020/04/08 12:17:02 nia Exp $
 
 DISTNAME=	mpv-0.32.0
-PKGREVISION=	7
+PKGREVISION=	8
 CATEGORIES=	multimedia
 MASTER_SITES=	${MASTER_SITE_GITHUB:=mpv-player/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -70,6 +70,7 @@ post-install:
 
 .include "options.mk"
 
+LDFLAGS.NetBSD+=	-lossaudio
 .include "../../mk/oss.buildlink3.mk"
 .include "../../converters/libiconv/buildlink3.mk"
 .include "../../devel/waf/waf.mk"

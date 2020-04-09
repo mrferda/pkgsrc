@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.52 2020/01/12 20:20:26 ryoon Exp $
+# $NetBSD: Makefile,v 1.55 2020/04/08 08:07:17 adam Exp $
 
-DISTNAME=	uhd-3.14.1.1
-PKGREVISION=	1
+DISTNAME=	uhd-3.15.0.0
 CATEGORIES=	ham
 MASTER_SITES=	${MASTER_SITE_GITHUB:=EttusResearch/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -14,6 +13,7 @@ LICENSE=	gnu-gpl-v2
 DEPENDS+=	${PYPKGPREFIX}-mako-[0-9]*:../../devel/py-mako
 DEPENDS+=	${PYPKGPREFIX}-requests-[0-9]*:../../devel/py-requests
 
+CMAKE_ARGS+=	-DENABLE_MAN_PAGE_COMPRESSION=OFF
 CMAKE_ARGS+=	-DPKG_MAN_DIR=${PKGMANDIR}/man1
 CMAKE_ARGS+=	-DRST2HTML_EXECUTABLE=${PREFIX}/bin/rst2html-${PYVERSSUFFIX}.py
 CMAKE_ARGS+=	-Wno-dev
@@ -33,7 +33,7 @@ CMAKE_ARGS+=	-DENABLE_PYTHON3=ON
 # (and not a doc edit), and having experimented no clarification is
 # needed.
 USE_CMAKE=		yes
-USE_LANGUAGES=		c gnu++11
+USE_LANGUAGES=		c gnu++14
 USE_TOOLS+=		pkg-config
 GCC_REQD+=		4.8
 # to avoid extra pax_global_header
@@ -55,6 +55,7 @@ REPLACE_PYTHON+=	tests/devtest/rx_samples_to_file_test.py
 REPLACE_PYTHON+=	tests/devtest/test_messages_test.py
 REPLACE_PYTHON+=	tests/devtest/test_pps_test.py
 REPLACE_PYTHON+=	tests/devtest/tx_bursts_test.py
+REPLACE_PYTHON+=	tests/devtest/tx_waveforms_test.py
 REPLACE_PYTHON+=	tests/devtest/uhd_test_base.py
 REPLACE_PYTHON+=	tests/devtest/usrp_probe.py
 REPLACE_PYTHON+=	tests/devtest/usrp_probe_test.py
