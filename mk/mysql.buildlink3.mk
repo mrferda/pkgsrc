@@ -61,7 +61,7 @@ _PKG_MYSQLS+=			percona80 percona57 percona56 percona55
 _PKG_MYSQLS+=			percona57-cluster percona56-cluster percona55-cluster
 
 # Package-settable variables.   XXX: 57 hardcoded duplicate to avoid pkglint errors
-MYSQL_VERSIONS_ACCEPTED?=	57 ${_PKG_MYSQLS}
+MYSQL_VERSIONS_ACCEPTED?=	57 ${_PKG_MYSQLS:N*55*}
 
 _MYSQL_PKGBASE.57-cluster=	mysql-cluster-7.3.*
 _MYSQL_PKGSRCDIR.57-cluster=	../../joyent/mysql73-cluster
