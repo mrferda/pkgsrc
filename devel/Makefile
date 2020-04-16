@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3091 2020/04/06 08:01:26 wiz Exp $
+# $NetBSD: Makefile,v 1.3095 2020/04/14 15:05:05 ryoon Exp $
 #
 
 COMMENT=	Development utilities
@@ -108,6 +108,7 @@ SUBDIR+=	apache-maven
 SUBDIR+=	apel
 SUBDIR+=	apenwarr-redo
 SUBDIR+=	appdata-tools
+SUBDIR+=	appstream-glib
 SUBDIR+=	apr
 SUBDIR+=	apr-util
 SUBDIR+=	arcanist
@@ -459,6 +460,7 @@ SUBDIR+=	golint
 SUBDIR+=	google-api-go-client
 SUBDIR+=	google-glog
 SUBDIR+=	googletest
+SUBDIR+=	gopls
 SUBDIR+=	gperf
 SUBDIR+=	gperftools
 SUBDIR+=	gprbuild-aux
@@ -948,6 +950,7 @@ SUBDIR+=	ocaml-jane-street-headers
 SUBDIR+=	ocaml-jbuilder
 SUBDIR+=	ocaml-js-build-tools
 SUBDIR+=	ocaml-jst-config
+SUBDIR+=	ocaml-ke
 SUBDIR+=	ocaml-logs
 SUBDIR+=	ocaml-lru
 SUBDIR+=	ocaml-lwt
@@ -2834,6 +2837,7 @@ SUBDIR+=	ruby-uuidtools
 SUBDIR+=	ruby-validatable
 SUBDIR+=	ruby-wisper
 SUBDIR+=	ruby-wmi-lite
+SUBDIR+=	ruby-yell
 SUBDIR+=	ruby-zeitwerk
 SUBDIR+=	ruby-zookeeper
 SUBDIR+=	ruby2ruby

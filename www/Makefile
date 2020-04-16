@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1449 2020/03/30 13:54:29 adam Exp $
+# $NetBSD: Makefile,v 1.1453 2020/04/14 19:54:51 js Exp $
 #
 
 COMMENT=	Packages related to the World Wide Web
@@ -625,6 +625,7 @@ SUBDIR+=	py-WebOb
 SUBDIR+=	py-WebTest
 SUBDIR+=	py-aiohttp
 SUBDIR+=	py-aiohttp-cors
+SUBDIR+=	py-aiohttp-socks
 SUBDIR+=	py-asgiref
 SUBDIR+=	py-autobahn
 SUBDIR+=	py-beautifulsoup
@@ -857,10 +858,12 @@ SUBDIR+=	ruby-div
 SUBDIR+=	ruby-em-http-request
 SUBDIR+=	ruby-em-websocket
 SUBDIR+=	ruby-erubis
+SUBDIR+=	ruby-ethon
 SUBDIR+=	ruby-faraday
 SUBDIR+=	ruby-faraday_middleware
 SUBDIR+=	ruby-faye-websocket
 SUBDIR+=	ruby-fcgi
+SUBDIR+=	ruby-html-proofer
 SUBDIR+=	ruby-htmlsplit
 SUBDIR+=	ruby-http
 SUBDIR+=	ruby-http-accept
@@ -930,6 +933,7 @@ SUBDIR+=	ruby-sinatra
 SUBDIR+=	ruby-sinatra-contrib
 SUBDIR+=	ruby-staticmatic
 SUBDIR+=	ruby-tag
+SUBDIR+=	ruby-typhoeus
 SUBDIR+=	ruby-unicorn
 SUBDIR+=	ruby-url_mount
 SUBDIR+=	ruby-webkit-gtk
