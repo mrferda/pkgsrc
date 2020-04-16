@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.591 2020/04/09 00:16:01 gutteridge Exp $
+# $NetBSD: Makefile,v 1.594 2020/04/14 22:33:14 js Exp $
 #
 
 COMMENT=	Audio tools
@@ -12,6 +12,7 @@ SUBDIR+=	adplay
 SUBDIR+=	adplug
 SUBDIR+=	aeneas
 SUBDIR+=	aiomixer
+SUBDIR+=	alac
 SUBDIR+=	alacconvert
 SUBDIR+=	alsa-lib
 SUBDIR+=	alsa-plugins-oss
@@ -22,6 +23,7 @@ SUBDIR+=	amaroc
 SUBDIR+=	amarok
 SUBDIR+=	amp
 SUBDIR+=	ampache
+SUBDIR+=	amsynth
 SUBDIR+=	applerecords
 SUBDIR+=	ardour
 SUBDIR+=	ario
@@ -54,6 +56,7 @@ SUBDIR+=	celt
 SUBDIR+=	chromaprint
 SUBDIR+=	cmp3
 SUBDIR+=	cmus
+SUBDIR+=	cmusfm
 SUBDIR+=	cplay
 SUBDIR+=	cripple
 SUBDIR+=	cs4235

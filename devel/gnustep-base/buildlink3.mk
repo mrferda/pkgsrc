@@ -1,4 +1,4 @@
-# $NetBSD: buildlink3.mk,v 1.32 2019/04/03 00:32:35 ryoon Exp $
+# $NetBSD: buildlink3.mk,v 1.34 2020/04/16 09:35:36 manu Exp $
 
 BUILDLINK_TREE+=	gnustep-base
 

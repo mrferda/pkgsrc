@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.10 2020/01/18 21:47:59 jperkin Exp $
+# $NetBSD: Makefile,v 1.12 2020/04/16 09:08:46 manu Exp $
 
 PKGNAME=	${DISTNAME:S/-/-server-/}
 PKGREVISION=	3
@@ -11,6 +11,8 @@ CONFLICTS=	mysql-server-[0-9]*
 
 CMAKE_ARGS+=		-DWITH_LIBWRAP=ON
 CMAKE_ARGS+=		-DINSTALL_INFODIR=${PKGINFODIR}
+# MariaDB uses internal OpenSSL structure made opaque with later versions
+CMAKE_ARGS+=		-DWITH_SSL=bundled
 # Avoid build error on NetBSD/amd64 7.99.9
 # and TokuDB is available only on amd64.
 CMAKE_ARGS+=		-DWITHOUT_TOKUDB=1
@@ -80,6 +82,9 @@ REPLACE_SH+=		mysql-test/t/long_tmpdir-master.sh
 REPLACE_SH+=		mysql-test/t/lowercase_mixed_tmpdir-master.sh
 
 INSTALLATION_DIRS+=	bin
+
+post-extract:
+	${CHMOD} -R g-w ${WRKSRC}
 
 .include "../../mk/compiler.mk"
 

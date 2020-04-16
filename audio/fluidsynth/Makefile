@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.35 2020/03/08 16:47:24 wiz Exp $
+# $NetBSD: Makefile,v 1.38 2020/04/12 14:11:13 nia Exp $
 
-DISTNAME=	fluidsynth-2.1.1
-PKGREVISION=	1
+DISTNAME=	fluidsynth-2.1.2
 CATEGORIES=	audio
 MASTER_SITES=	${MASTER_SITE_GITHUB:=FluidSynth/}
 GITHUB_TAG=	v${PKGVERSION_NOREV}
@@ -22,7 +21,6 @@ PKGCONFIG_OVERRIDE=	fluidsynth.pc.in
 
 LDFLAGS.SunOS+=		-lsocket
 
-.include "../../mk/bsd.prefs.mk"
 .include "../../mk/oss.buildlink3.mk"
 
 .if ${OSS_TYPE} != "none"
@@ -32,9 +30,7 @@ SUBST_STAGE.oss=	pre-configure
 SUBST_MESSAGE.oss=	Correcting the path to the OSS device.
 SUBST_FILES.oss+=	src/drivers/fluid_oss.c
 SUBST_SED.oss+=		-e "s,/dev/dsp,${DEVOSSAUDIO},g"
-.  if ${OPSYS} == "NetBSD"
-SUBST_SED.oss+=		-e "s,/dev/midi,/dev/rmidi0,g"
-.  endif
+SUBST_SED.oss+=		-e "s,/dev/midi,${DEVOSSMIDI},g"
 .endif
 
 .include "options.mk"
@@ -42,6 +38,5 @@ SUBST_SED.oss+=		-e "s,/dev/midi,/dev/rmidi0,g"
 .include "../../devel/libgetopt/buildlink3.mk"
 .include "../../devel/glib2/buildlink3.mk"
 .include "../../mk/readline.buildlink3.mk"
-.include "../../mk/oss.buildlink3.mk"
 .include "../../mk/pthread.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
