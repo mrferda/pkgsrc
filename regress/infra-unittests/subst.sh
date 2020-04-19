@@ -223,7 +223,7 @@ EOF
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in single' \
 		'warning: [subst.mk:class] Nothing changed in ./single.' \
-		'fail: [subst.mk:class] The pattern single has no effect.' \
+		'fail: [subst.mk:class] The filename pattern "single" has no effect.' \
 		'*** Error code 1' \
 		'' \
 		'Stop.' \
@@ -256,7 +256,7 @@ EOF
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in nonexistent' \
 		'warning: [subst.mk:class] Ignoring non-existent file "./nonexistent".' \
-		'fail: [subst.mk:class] The pattern nonexistent has no effect.' \
+		'fail: [subst.mk:class] The filename pattern "nonexistent" has no effect.' \
 		'*** Error code 1' \
 		'' \
 		'Stop.' \
@@ -797,17 +797,30 @@ if test_case_begin "SUBST_VARS for variables with regex characters"; then
 	# Ensure that special regex characters like dots and parentheses
 	# may appear in variable names and are properly escaped.
 
+	# Variable names containing a dollar are not supported.
+	# Bmake behaves very surprisingly when a $ is expanded inside a :C
+	# modifier. Nobody needs this feature anyway, it was just an
+	# experiment to see whether this would be theoretically possible.
+
+	# Variable names ending with a backslash are not supported.
+	# The backslash may only occur in the middle of the variable name.
+
 	create_file_lines "testcase.mk" \
 		'SUBST_CLASSES+=	vars' \
 		'SUBST_STAGE.vars=	pre-configure' \
 		'SUBST_FILES.vars=	vars.txt' \
-		'SUBST_VARS.vars=	VAR...... VAR.abcde VAR.() VAR.<>' \
+		'SUBST_VARS.vars=	VAR...... VAR.abcde' \
+		'SUBST_VARS.vars+=	VAR.() VAR.<> VAR.[]' \
+		'SUBST_VARS.vars+=	VAR.$$x VAR.^ VAR.\x' \
 		'' \
 		'VAR......=	dots' \
 		'VAR.abcde=	letters' \
 		'VAR.()=	parentheses' \
 		'VAR.<>=	angle brackets' \
 		'VAR.[]=	square brackets' \
+		'VAR.$$x=	dollar' \
+		'VAR.^=		circumflex' \
+		'VAR.\x=	backslash' \
 		'' \
 		'.include "prepare-subst.mk"' \
 		'.include "mk/subst.mk"'
@@ -816,21 +829,25 @@ if test_case_begin "SUBST_VARS for variables with regex characters"; then
 		"@VAR.abcde@" \
 		"@VAR.()@" \
 		"@VAR.<>@" \
-		"@VAR.[]@"
+		"@VAR.[]@" \
+		'@VAR.$x@' \
+		'@VAR.^@' \
+		'@VAR.\x@'
 
 	run_bmake "testcase.mk" "pre-configure" \
 		1> "$tmpdir/stdout" \
 		2> "$tmpdir/stderr" \
 	&& exitcode=0 || exitcode=$?
 
-	# TODO: Why are the angle brackets replaced, but not the parentheses
-	# and square brackets?
 	assert_that "vars.txt" --file-is-lines \
 		"dots" \
 		"letters" \
-		"@VAR.()@" \
+		"parentheses" \
 		"angle brackets" \
-		"@VAR.[]@"
+		"square brackets" \
+		'@VAR.$x@' \
+		'circumflex' \
+		'backslash'
 	assert_that "stdout" --file-is-lines \
 		"=> Substituting \"vars\" in vars.txt"
 	assert_that "stderr" --file-is-empty
@@ -885,10 +902,6 @@ if test_case_begin "pattern matches only directory"; then
 
 	# When a pattern matches a directory, that directory is silently
 	# skipped.
-	#
-	# In this test case, the pattern also matches a regular file that
-	# is actually modified. Therefore the pattern has an effect, and
-	# there is no error message.
 
 	create_file_lines "testcase.mk" \
 		'SUBST_CLASSES+=	dir' \
@@ -913,7 +926,7 @@ if test_case_begin "pattern matches only directory"; then
 	assert_that "subdir/subfile" --file-is-lines "@VAR@" # unchanged
 	assert_that "stdout" --file-is-lines \
 		"=> Substituting \"dir\" in sub*" \
-		"fail: [subst.mk:dir] The pattern sub* has no effect." \
+		'fail: [subst.mk:dir] The filename pattern "sub*" has no effect.' \
 		"*** Error code 1" \
 		"" \
 		"Stop." \
@@ -950,7 +963,7 @@ if test_case_begin "first filename pattern has no effect"; then
 	assert_that "out" --file-is-lines \
 		'=> Substituting "id" in file1 file2' \
 		'warning: [subst.mk:id] Nothing changed in ./file1.' \
-		'fail: [subst.mk:id] The pattern file1 has no effect.' \
+		'fail: [subst.mk:id] The filename pattern "file1" has no effect.' \
 		'*** Error code 1' \
 		'' \
 		'Stop.' \

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.60 2020/01/18 23:35:33 rillig Exp $
+# $NetBSD: Makefile,v 1.62 2020/04/18 23:28:42 joerg Exp $
 
 DISTNAME=	source-highlight-3.1.8
 PKGREVISION=	11
@@ -25,9 +25,17 @@ PKGCONFIG_OVERRIDE=	source-highlight.pc.in
 
 INFO_FILES=	YES
 
-# this is only really needed for the 'test' target
-USE_TOOLS+=	gmake gsed
+# gmake and gsed are necessary for testing only,
+# but the tools handling is somewhat broken in that regard
+USE_TOOLS+=	gsed gmake bash:test
 TEST_TARGET=	check
+
+# bash scripts
+CHECK_PORTABILITY_SKIP+= \
+	lib/tests/valgrind_test.sh.in \
+	tests/valgrind_suppressions.sh.in \
+	tests/valgrind_test.sh.in \
+	tests/valgrind_tests.sh.in
 
 .include "../../devel/boost-libs/buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
