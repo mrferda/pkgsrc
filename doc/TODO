@@ -1,4 +1,4 @@
-$NetBSD: TODO,v 1.19826 2020/04/18 08:15:43 adam Exp $
+$NetBSD: TODO,v 1.19839 2020/04/20 14:48:39 wiz Exp $
 
 Suggested new packages
 ======================
@@ -533,9 +533,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o ede-2.0
 	o edje-1.7.10
 	o edonkeyclc-1.0.2 [replaces net/edonkey2k]
-	o eet-1.7.10
 	o efreet-1.7.10
-	o eina-1.7.10
 	o eio-1.7.10
 	o ekiga-4.0.1
 	o electric-9.07
@@ -830,6 +828,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o mcsim-5.6.5
 	o mecab-ipadic-2.7.0.20070801
 	o mediawiki-1.34
+	o meld-3.21.0 [dumps core]
 	o memached-1.5.6
 	o memcached-1.6
 	o merkaator-0.18.3
@@ -1094,6 +1093,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o sunclock-3.57 [https://github.com/mdoege/Sunclock]
 	o swapd-1.0.5
 	o swath-0.5.2
+	o swift-4.0.2
 	o sysinfo-4.2.2
 	o system-tools-backends-2.10.1
 	o systrace-1.6e
@@ -1117,6 +1117,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o tetrinetx-1.40c
 	o tfmxplay-1.1.6
 	o tig-2.2
+	o tigervnc-1.10.1 [quite unstable]
 	o tightvnc-2.7.10
 	o tile-0.7.4
 	o tinc-1.0.33

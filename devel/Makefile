@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3103 2020/04/18 19:43:04 schmonz Exp $
+# $NetBSD: Makefile,v 1.3106 2020/04/20 14:38:20 schmonz Exp $
 #
 
 COMMENT=	Development utilities
@@ -901,6 +901,7 @@ SUBDIR+=	netcdf-cxx
 SUBDIR+=	netcdf-fortran
 SUBDIR+=	newfile
 SUBDIR+=	ninja-build
+SUBDIR+=	ninka
 SUBDIR+=	noweb
 SUBDIR+=	npapi-sdk
 SUBDIR+=	npth
@@ -1925,6 +1926,7 @@ SUBDIR+=	p5-Test-Simple
 SUBDIR+=	p5-Test-Spec
 SUBDIR+=	p5-Test-Spelling
 SUBDIR+=	p5-Test-Stream
+SUBDIR+=	p5-Test-Strict
 SUBDIR+=	p5-Test-SubCalls
 SUBDIR+=	p5-Test-Taint
 SUBDIR+=	p5-Test-TempDir
@@ -2113,6 +2115,7 @@ SUBDIR+=	py-angr
 SUBDIR+=	py-anytree
 SUBDIR+=	py-apipkg
 SUBDIR+=	py-appdirs
+SUBDIR+=	py-approvaltests
 SUBDIR+=	py-archinfo
 SUBDIR+=	py-argcomplete
 SUBDIR+=	py-argh
