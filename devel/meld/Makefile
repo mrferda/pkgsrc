@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.100 2020/03/10 22:09:37 wiz Exp $
+# $NetBSD: Makefile,v 1.103 2020/04/20 14:47:37 wiz Exp $
 
 DISTNAME=		meld-3.20.2
 PKGREVISION=		2

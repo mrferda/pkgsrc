@@ -1,4 +1,4 @@
-$NetBSD: distinfo,v 1.60 2020/03/04 09:47:21 wiz Exp $
+$NetBSD: distinfo,v 1.62 2020/04/20 14:47:37 wiz Exp $
 
 SHA1 (meld-3.20.2.tar.xz) = 6aa69d9841efe7535f7699e0f5a895034f182e41
 RMD160 (meld-3.20.2.tar.xz) = 95e46ba77c4ee894dc2f2bd8e7287f00e586d0d2

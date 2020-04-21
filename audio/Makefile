@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.594 2020/04/14 22:33:14 js Exp $
+# $NetBSD: Makefile,v 1.596 2020/04/21 13:32:23 nia Exp $
 #
 
 COMMENT=	Audio tools
@@ -253,6 +253,7 @@ SUBDIR+=	libofa
 SUBDIR+=	libopenmpt
 SUBDIR+=	libopenspc
 SUBDIR+=	libopus
+SUBDIR+=	libopusenc
 SUBDIR+=	libreplaygain
 SUBDIR+=	libsamplerate
 SUBDIR+=	libsbsms
@@ -365,6 +366,7 @@ SUBDIR+=	picard
 SUBDIR+=	playitslowly
 SUBDIR+=	pocketsphinx
 SUBDIR+=	portaudio
+SUBDIR+=	pragha
 SUBDIR+=	pulseaudio
 SUBDIR+=	py-acoustid
 SUBDIR+=	py-ao

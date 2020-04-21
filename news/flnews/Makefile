@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.7 2020/01/25 10:45:12 jperkin Exp $
+# $NetBSD: Makefile,v 1.9 2020/04/21 07:57:01 micha Exp $
 
 FLNEWS_VERSION=	0.17
 

@@ -1,4 +1,4 @@
-$NetBSD: TODO,v 1.19826 2020/04/18 08:15:43 adam Exp $
+$NetBSD: TODO,v 1.19842 2020/04/21 14:17:52 nia Exp $
 
 Suggested new packages
 ======================
@@ -465,7 +465,6 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o bzr-svn-1.2.2
 	o bzrtools-2.6.0
 	o c4-1.10
-	o cacti-1.2.7
 	o cacti-spine-1.2.7
 	o cal3d-0.11.0
 	o calc-2.11.10.1
@@ -533,9 +532,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o ede-2.0
 	o edje-1.7.10
 	o edonkeyclc-1.0.2 [replaces net/edonkey2k]
-	o eet-1.7.10
 	o efreet-1.7.10
-	o eina-1.7.10
 	o eio-1.7.10
 	o ekiga-4.0.1
 	o electric-9.07
@@ -772,7 +769,6 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o lgeneral-1.3.1
 	o libarchive-3.4.2
 	o libbpg-0.9.6
-	o libcaca-0.99.19
 	o libcarddav-14.0.4
 	o libflash-0.4.13
 	o libfolks-0.10.1 [wip]
@@ -830,6 +826,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o mcsim-5.6.5
 	o mecab-ipadic-2.7.0.20070801
 	o mediawiki-1.34
+	o meld-3.21.0 [dumps core]
 	o memached-1.5.6
 	o memcached-1.6
 	o merkaator-0.18.3
@@ -862,7 +859,6 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o multitail-6.4.2
 	o munin-common-2.0.52
 	o muse-0.9.2
-	o mutt-1.13.5
 	o myodbc-5.3.4
 	o mysql-connector-c++-8.0.17
 	o mysql-server-8.0.18
@@ -1094,6 +1090,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o sunclock-3.57 [https://github.com/mdoege/Sunclock]
 	o swapd-1.0.5
 	o swath-0.5.2
+	o swift-4.0.2
 	o sysinfo-4.2.2
 	o system-tools-backends-2.10.1
 	o systrace-1.6e
@@ -1117,6 +1114,7 @@ For possible Perl packages updates, see http://www.NetBSD.org/~wiz/perl.html.
 	o tetrinetx-1.40c
 	o tfmxplay-1.1.6
 	o tig-2.2
+	o tigervnc-1.10.1 [quite unstable]
 	o tightvnc-2.7.10
 	o tile-0.7.4
 	o tinc-1.0.33

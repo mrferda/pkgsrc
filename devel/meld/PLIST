@@ -1,4 +1,4 @@
-@comment $NetBSD: PLIST,v 1.32 2019/02/13 19:49:38 wiz Exp $
+@comment $NetBSD: PLIST,v 1.35 2020/04/20 14:47:37 wiz Exp $
 bin/meld
 ${PYSITELIB}/${EGG_FILE}
 ${PYSITELIB}/meld/__init__.py
