@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1319 2020/04/17 12:35:22 adam Exp $
+# $NetBSD: Makefile,v 1.1321 2020/04/21 11:34:16 wiz Exp $
 #
 
 COMMENT=	Networking tools
@@ -760,6 +760,7 @@ SUBDIR+=	radiusd-cistron
 SUBDIR+=	radsecproxy
 SUBDIR+=	rancid
 SUBDIR+=	rbldnsd
+SUBDIR+=	rclone
 SUBDIR+=	rdesktop
 SUBDIR+=	rdist6
 SUBDIR+=	remmina
@@ -912,6 +913,7 @@ SUBDIR+=	uftp
 SUBDIR+=	unbound
 SUBDIR+=	unfs3
 SUBDIR+=	unifi
+SUBDIR+=	unison-snapshot
 SUBDIR+=	unison2.51
 SUBDIR+=	unworkable
 SUBDIR+=	upclient
