@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.44 2020/03/10 22:10:44 wiz Exp $
+# $NetBSD: Makefile,v 1.46 2020/04/23 17:08:49 nia Exp $
 
 DISTNAME=	freerdp-1.0.2
-PKGREVISION=	39
+PKGREVISION=	40
 CATEGORIES=	net
 MASTER_SITES=	http://pub.freerdp.com/releases/
 
@@ -11,6 +11,8 @@ COMMENT=	Free implementation of the Remote Desktop Protocol (major version 1)
 LICENSE=	apache-2.0
 
 TOOL_DEPENDS+=	xmlto-[0-9]*:../../textproc/xmlto
+
+BROKEN=		"Fails to build with OpenSSL 1.1"
 
 USE_CMAKE=		yes
 USE_TOOLS+=		pkg-config
