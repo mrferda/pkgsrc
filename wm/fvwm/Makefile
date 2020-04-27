@@ -1,8 +1,8 @@
-# $NetBSD: Makefile,v 1.45 2020/03/10 22:11:07 wiz Exp $
+# $NetBSD: Makefile,v 1.49 2020/04/25 20:04:23 nikita Exp $
 
 DISTNAME=	fvwm-${FVWM_VER}
-PKGREVISION=	2
-CATEGORIES=	x11 wm
+PKGREVISION=	3
+CATEGORIES=	wm x11
 MASTER_SITES=	${MASTER_SITE_GITHUB:=fvwmorg/}
 GITHUB_RELEASE=	${FVWM_VER}
 
@@ -23,6 +23,8 @@ INSTALLATION_DIRS+=	lib/X11/fvwm2
 INSTALLATION_DIRS+=	lib/X11/fvwm2/pixmaps
 INSTALLATION_DIRS+=	${PKGMANDIR}/man1
 
+# \todo: build with debug(or dbug?) to see fvwm console etc
+# \todo: look into more configure options
 CONFIGURE_ARGS+=	--sysconfdir=${PREFIX}/lib/X11/fvwm2
 CONFIGURE_ARGS+=	--libexecdir=${PREFIX}/lib/X11
 CONFIGURE_ARGS+=	--with-xpm-includes=${BUILDLINK_PREFIX.libXpm}/include
@@ -40,11 +42,6 @@ PYTHON_VERSIONS_INCOMPATIBLE=	27
 DEPENDS+=			${PYPKGPREFIX}-xdg-[0-9]*:../../devel/py-xdg
 CONFIGURE_ENV+=			PYTHON=${PYTHONBIN}
 CONFIGURE_ENV+=			ac_cv_path_PYTHON=${PYTHONBIN:Q}
-
-# 2 manpages want xsltproc.
-CONFIGURE_ARGS+=	--enable-mandoc
-BUILD_DEPENDS+=		docbook-xsl-[0-9]*:../../textproc/docbook-xsl
-BUILD_DEPENDS+=		libxslt-[0-9]*:../../textproc/libxslt
 
 .include "options.mk"
 

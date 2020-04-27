@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.23 2020/04/01 10:01:29 nia Exp $
+# $NetBSD: Makefile,v 1.25 2020/04/26 14:02:28 rillig Exp $
 
-DISTNAME=	bftpd-5.4
+DISTNAME=	bftpd-5.5
+PKGREVISION=	1
 CATEGORIES=	net
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=bftpd/}
 
@@ -28,6 +29,7 @@ SUBST_CLASSES+=		sysconf
 SUBST_STAGE.sysconf=	post-configure
 SUBST_FILES.sysconf=	mypaths.h bftpd.8
 SUBST_SED.sysconf=	-e 's|PREFIX"/etc/|"${PKG_SYSCONFDIR}/|g'
+SUBST_SED.sysconf+=	-e 's|normally /etc/|normally ${PKG_SYSCONFDIR}/|g'
 
 INSTALLATION_DIRS=	sbin ${PKGMANDIR}/man8 share/examples/bftpd
 

@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.157 2020/03/10 22:11:18 wiz Exp $
+# $NetBSD: Makefile,v 1.159 2020/04/27 15:45:43 tsutsui Exp $
 
-DISTNAME=	mlterm-3.8.9
-PKGREVISION=	2
+DISTNAME=	mlterm-3.9.0
 CATEGORIES=	x11
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=mlterm/}
 
@@ -25,8 +24,6 @@ EGDIR=			${PREFIX}/share/examples/mlterm
 CONF_FILES+=		${EGDIR}/${f} ${PKG_SYSCONFDIR}/${f}
 .endfor
 
-CONFIGURE_ARGS+=	--without-libiconv-prefix
-CONFIGURE_ARGS+=	--without-libintl-prefix
 CONFIGURE_ARGS+=	--sysconfdir=${PKG_SYSCONFBASEDIR}
 
 INSTALL_MAKE_FLAGS+=	sysconfdir=${PREFIX}/share/examples
@@ -37,8 +34,7 @@ INSTALL_MAKE_FLAGS+=	sysconfdir=${PREFIX}/share/examples
 SUBST_CLASSES+=		link
 SUBST_MESSAGE.link=	Fixing hardcoded paths and link options in Makefiles.
 SUBST_STAGE.link=	pre-configure
-SUBST_FILES.link=	Makefile.in */Makefile.in */*/Makefile.in \
-			*/*/*/Makefile.in
+SUBST_FILES.link=	*/Makefile.in */*/Makefile.in */*/*/Makefile.in
 SUBST_SED.link=		-e 's|(LIBTOOL_LINK).*(LIBS)|& ${X11_LDFLAGS:M*:Q}|g'
 SUBST_SED.link+=	-e 's|(LIBTOOL_LINK).*(LIBDIR)|& ${X11_LDFLAGS:M*:Q}|g'
 SUBST_SED.link+=	-e 's|/usr/local/|${PREFIX}/|g'
@@ -59,6 +55,8 @@ SUBST_SED.conf=		-e 's|/usr/X11R7/|${X11BASE}/|g'
 SUBST_SED.conf+=	-e 's|/usr/pkg/|${PREFIX}/|g'
 
 BUILDLINK_DEPMETHOD.libXt?=	build
+
+SPECIAL_PERMS+=		bin/mlterm ${REAL_ROOT_USER} utmp 2755
 
 INSTALLATION_DIRS=	share/doc/mlterm share/doc/mlterm/en share/doc/mlterm/ja
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3107 2020/04/21 10:56:45 jaapb Exp $
+# $NetBSD: Makefile,v 1.3113 2020/04/27 17:15:22 nikita Exp $
 #
 
 COMMENT=	Development utilities
@@ -385,6 +385,7 @@ SUBDIR+=	go-bytebufferpool
 SUBDIR+=	go-cast
 SUBDIR+=	go-check
 SUBDIR+=	go-cli
+SUBDIR+=	go-cmp
 SUBDIR+=	go-cobra
 SUBDIR+=	go-colorable
 SUBDIR+=	go-colortext
@@ -425,6 +426,7 @@ SUBDIR+=	go-isatty
 SUBDIR+=	go-jwalterweatherman
 SUBDIR+=	go-jwt-go
 SUBDIR+=	go-kingpin.v3-unstable
+SUBDIR+=	go-levenshtein
 SUBDIR+=	go-locker
 SUBDIR+=	go-logrus
 SUBDIR+=	go-mapstructure
@@ -450,10 +452,13 @@ SUBDIR+=	go-sync
 SUBDIR+=	go-sys
 SUBDIR+=	go-termbox
 SUBDIR+=	go-testify
+SUBDIR+=	go-textseg
 SUBDIR+=	go-thrift
+SUBDIR+=	go-tmc
 SUBDIR+=	go-tools
 SUBDIR+=	go-try
 SUBDIR+=	go-viper
+SUBDIR+=	go-wordwrap
 SUBDIR+=	go-xerrors
 SUBDIR+=	go-yaml
 SUBDIR+=	gob2
@@ -1076,6 +1081,7 @@ SUBDIR+=	p5-Attribute-Lexical
 SUBDIR+=	p5-AutoLoader
 SUBDIR+=	p5-AutoXS-Header
 SUBDIR+=	p5-Autodia
+SUBDIR+=	p5-B-COW
 SUBDIR+=	p5-B-Compiling
 SUBDIR+=	p5-B-Debug
 SUBDIR+=	p5-B-Hooks-EndOfScope

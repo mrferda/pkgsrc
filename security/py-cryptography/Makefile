@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.76 2020/04/03 06:25:50 adam Exp $
+# $NetBSD: Makefile,v 1.78 2020/04/23 05:49:00 adam Exp $
 
-DISTNAME=	cryptography-2.9
+DISTNAME=	cryptography-2.9.2
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME}
 CATEGORIES=	security python
 MASTER_SITES=	${MASTER_SITE_PYPI:=c/cryptography/}
@@ -29,7 +29,7 @@ DEPENDS+=	${PYPKGPREFIX}-ipaddress-[0-9]*:../../net/py-ipaddress
 .endif
 
 do-test:
-	cd ${WRKSRC} && py.test-${PYVERSSUFFIX}
+	cd ${WRKSRC} && pytest-${PYVERSSUFFIX}
 
 .include "../../lang/python/egg.mk"
 .include "../../security/openssl/buildlink3.mk"

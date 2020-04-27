@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.885 2020/03/31 23:08:28 gutteridge Exp $
+# $NetBSD: Makefile,v 1.895 2020/04/25 17:37:47 gutteridge Exp $
 #
 
 COMMENT=	Packages to support the X window system
@@ -260,6 +260,15 @@ SUBDIR+=	lxappearance
 SUBDIR+=	lxde-common
 SUBDIR+=	lxinput
 SUBDIR+=	lxlauncher
+SUBDIR+=	lxqt-about
+SUBDIR+=	lxqt-admin
+SUBDIR+=	lxqt-config
+SUBDIR+=	lxqt-globalkeys
+SUBDIR+=	lxqt-notificationd
+SUBDIR+=	lxqt-panel
+SUBDIR+=	lxqt-qtplugin
+SUBDIR+=	lxqt-runner
+SUBDIR+=	lxqt-session
 SUBDIR+=	lxrandr
 SUBDIR+=	lxsession
 SUBDIR+=	lxterminal
@@ -670,7 +679,6 @@ SUBDIR+=	xtrans
 SUBDIR+=	xtruss
 SUBDIR+=	xvattr
 SUBDIR+=	xvidcap
-SUBDIR+=	xvidcap-gtk2
 SUBDIR+=	xvidtune
 SUBDIR+=	xview
 SUBDIR+=	xview-clients
