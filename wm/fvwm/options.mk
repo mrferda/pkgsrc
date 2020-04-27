@@ -1,13 +1,14 @@
-# $NetBSD: options.mk,v 1.5 2020/02/26 18:09:40 nia Exp $
+# $NetBSD: options.mk,v 1.8 2020/04/25 20:04:23 nikita Exp $
 
 PKG_OPTIONS_VAR=		PKG_OPTIONS.fvwm
 PKG_SUPPORTED_OPTIONS=		gtk xrender xcursor xft2 fribidi debug svg
-PKG_SUGGESTED_OPTIONS+=		svg
+PKG_SUPPORTED_OPTIONS+=		doc
+PKG_SUGGESTED_OPTIONS+=		svg xft2 xrender xcursor doc
 PKG_OPTIONS_LEGACY_VARS+=	FVWM2_USE_GTK:gtk
 
 .include "../../mk/bsd.options.mk"
 
-PLIST_VARS+=		gtk fribidi
+PLIST_VARS+=		gtk fribidi doc
 
 .if !empty(PKG_OPTIONS:Mgtk)
 .  include "../../x11/gtk/buildlink3.mk"
@@ -55,4 +56,14 @@ CONFIGURE_ARGS+=	--disable-debug-msgs
 .include "../../graphics/librsvg/buildlink3.mk"
 .else
 CONFIGURE_ARGS+=	--disable-rsvg
+.endif
+
+.if !empty(PKG_OPTIONS:Mdoc)
+# 2 manpages want xsltproc.
+CONFIGURE_ARGS+=	--enable-mandoc
+TOOL_DEPENDS+=		docbook-xsl-[0-9]*:../../textproc/docbook-xsl
+TOOL_DEPENDS+=		libxslt-[0-9]*:../../textproc/libxslt
+PLIST.doc=		yes
+.else
+CONFIGURE_ARGS+=	--disable-mandoc
 .endif

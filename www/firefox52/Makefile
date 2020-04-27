@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.52 2020/04/12 08:29:17 adam Exp $
+# $NetBSD: Makefile,v 1.54 2020/04/25 16:55:07 rillig Exp $
 
 FIREFOX_VER=		${MOZ_BRANCH}${MOZ_BRANCH_MINOR}
 MOZ_BRANCH=		52.9
@@ -16,7 +16,7 @@ WRKSRC=		${WRKDIR}/${DISTNAME:S/.source//}
 
 MAINTAINER=	ryoon@NetBSD.org
 HOMEPAGE=	https://www.mozilla.com/en-US/firefox/
-COMMENT=	Web browser with support for extensions (version ${MOZ_BRANCH:C/\..*//})
+COMMENT=	Web browser with support for extensions (version ${FIREFOX_VER:tu:C/\\.[[:digit:]\.]*//})
 LICENSE=	mpl-1.1
 
 MOZILLA_DIR=	# empty
@@ -65,12 +65,6 @@ MOZILLA_NAME=	Firefox
 .else
 MOZILLA_NAME=	Browser
 .endif
-
-SUBST_CLASSES+=		sys-dic
-SUBST_STAGE.sys-dic=	pre-configure
-SUBST_MESSAGE.sys-dic=	Reference to system hunspell dictionaries.
-SUBST_FILES.sys-dic=	extensions/spellcheck/hunspell/glue/mozHunspell.cpp
-SUBST_VARS.sys-dic=	PREFIX
 
 post-extract:
 	mv ${WRKSRC}/gfx/ycbcr/yuv_row_arm.s ${WRKSRC}/gfx/ycbcr/yuv_row_arm.S

@@ -1,7 +1,9 @@
 #! /bin/sh
+# $NetBSD: subst.sh,v 1.25 2020/04/26 12:46:33 rillig Exp $
 #
 # Tests for mk/subst.mk.
 #
+
 set -eu
 
 . "./test.subr"
@@ -1096,6 +1098,36 @@ if test_case_begin "executable bit is preserved"; then
 	|| assert_fail "cmd must still be executable"
 	[ -x "$tmpdir/data" ] \
 	&& assert_fail "data must not be executable"
+
+	test_case_end
+fi
+
+
+if test_case_begin "unreadable file"; then
+
+	create_file_lines "testcase.mk" \
+		'SUBST_CLASSES+=	id' \
+		'SUBST_STAGE.id=	pre-configure' \
+		'SUBST_FILES.id=	unreadable-file' \
+		'SUBST_SED.id=		-e s,before,after,' \
+		'' \
+		'.include "prepare-subst.mk"' \
+		'.include "mk/subst.mk"'
+	create_file_lines "unreadable-file" \
+		'before'
+	chmod 0000 "$tmpdir/unreadable-file"
+
+	run_bmake "testcase.mk" "pre-configure" 1> "$tmpdir/out" 2>&1 \
+	&& exitcode=0 || exitcode=$?
+
+	assert_that "out" --file-is-lines \
+		'=> Substituting "id" in unreadable-file' \
+		'sh: cannot open unreadable-file: permission denied' \
+		'sh: cannot open unreadable-file: permission denied' \
+		'*** Error code 1' \
+		'' \
+		'Stop.' \
+		"$make: stopped in $PWD"
 
 	test_case_end
 fi
