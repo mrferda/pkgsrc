@@ -106,7 +106,7 @@
 #
 
 SUBST_SHOW_DIFF?=	no
-SUBST_NOOP_OK?=		yes	# only for backwards compatibility
+SUBST_NOOP_OK?=		no	# only for backwards compatibility
 
 _VARGROUPS+=		subst
 _USER_VARS.subst=	SUBST_SHOW_DIFF SUBST_NOOP_OK
