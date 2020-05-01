@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1321 2020/04/21 11:34:16 wiz Exp $
+# $NetBSD: Makefile,v 1.1327 2020/05/01 17:55:05 nia Exp $
 #
 
 COMMENT=	Networking tools
@@ -36,6 +36,7 @@ SUBDIR+=	avahi
 SUBDIR+=	awhois
 SUBDIR+=	aws-sdk-go
 SUBDIR+=	balance
+SUBDIR+=	bandcamp-dl
 SUBDIR+=	barnyard
 SUBDIR+=	batchftp
 SUBDIR+=	bftpd
@@ -457,6 +458,7 @@ SUBDIR+=	openconnect
 SUBDIR+=	openh323
 SUBDIR+=	openntpd
 SUBDIR+=	openresolv
+SUBDIR+=	openrrcp
 SUBDIR+=	openrsync
 SUBDIR+=	openslp
 SUBDIR+=	openvmps
@@ -685,11 +687,13 @@ SUBDIR+=	py-gsutil
 SUBDIR+=	py-hatop
 SUBDIR+=	py-hpack
 SUBDIR+=	py-ifaddr
+SUBDIR+=	py-impacket
 SUBDIR+=	py-ipaddress
 SUBDIR+=	py-irclib
 SUBDIR+=	py-junos-eznc
 SUBDIR+=	py-kenosis
 SUBDIR+=	py-kombu
+SUBDIR+=	py-ldapdomaindump
 SUBDIR+=	py-lexicon
 SUBDIR+=	py-libdnet
 SUBDIR+=	py-libpcap

@@ -1,7 +1,6 @@
-# $NetBSD: Makefile,v 1.8 2020/04/12 08:28:39 adam Exp $
+# $NetBSD: Makefile,v 1.10 2020/04/30 13:12:46 nia Exp $
 
-DISTNAME=	easyrpg-player-0.6.1
-PKGREVISION=	3
+DISTNAME=	easyrpg-player-0.6.2
 CATEGORIES=	games
 MASTER_SITES=	https://easyrpg.org/downloads/player/${PKGVERSION_NOREV}/
 EXTRACT_SUFX=	.tar.xz
@@ -14,6 +13,10 @@ LICENSE=	gnu-gpl-v3
 GNU_CONFIGURE=	yes
 USE_TOOLS+=	pkg-config gmake
 USE_LANGUAGES+=	c c++
+
+# "We require now the C++ language standard C++14.
+# The lowest GCC compiler supporting this fully is GCC5"
+GCC_REQD+=	5
 
 .include "options.mk"
 .include "../../audio/libxmp/buildlink3.mk"
