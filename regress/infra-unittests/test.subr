@@ -1,5 +1,5 @@
 #! /bin/sh
-# $NetBSD: test.subr,v 1.10 2020/04/26 12:46:33 rillig Exp $
+# $NetBSD: test.subr,v 1.12 2020/05/01 14:14:12 rillig Exp $
 #
 # This file defines utilities for testing Makefile fragments and shell
 # programs from the pkgsrc infrastructure. While testing one part of the
@@ -153,10 +153,12 @@ test_case_begin() {
 
 # Can be redefined by actual tests.
 test_case_set_up() {
+	:
 }
 
 # Can be redefined by actual tests.
 test_case_tear_down() {
+	:
 }
 
 test_case_end() {
@@ -246,7 +248,7 @@ create_pkgsrc_file() {
 
 run_bmake() {
 	cat <<EOF > "$tmpdir/test.subr.main.mk"
-PKGSRCDIR=	$relative_pkgsrcdir
+PKGSRCDIR=	$pkgsrcdir
 .PATH:		$mocked_pkgsrcdir
 .PATH:		$pkgsrcdir
 .include "$1"
