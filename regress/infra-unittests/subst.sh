@@ -1,5 +1,5 @@
 #! /bin/sh
-# $NetBSD: subst.sh,v 1.28 2020/05/01 06:42:32 rillig Exp $
+# $NetBSD: subst.sh,v 1.31 2020/05/02 06:48:59 rillig Exp $
 #
 # Tests for mk/subst.mk.
 #
@@ -258,7 +258,7 @@ EOF
 
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in nonexistent' \
-		'warning: [subst.mk:class] Ignoring non-existent file "nonexistent".' \
+		'warning: [subst.mk:class] Ignoring nonexistent file "nonexistent".' \
 		'fail: [subst.mk:class] The filename pattern "nonexistent" has no effect.' \
 		'*** Error code 1' \
 		'' \
@@ -290,7 +290,7 @@ EOF
 
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in nonexistent' \
-		'info: [subst.mk:class] Ignoring non-existent file "nonexistent".'
+		'info: [subst.mk:class] Ignoring nonexistent file "nonexistent".'
 	assert_that "actual-output" --file-equals "expected-output"
 	assert_that "$exitcode" --equals "0"
 
@@ -318,7 +318,7 @@ EOF
 
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in *exist* *not-found*' \
-		'info: [subst.mk:class] Ignoring non-existent file "./*not-found*".'
+		'info: [subst.mk:class] Ignoring nonexistent file "./*not-found*".'
 	assert_that "actual-output" --file-equals "expected-output"
 	assert_that "exists" --file-contains-exactly "this example exists"
 	assert_that "$exitcode" --equals "0"
@@ -343,9 +343,9 @@ EOF
 
 	create_file_lines "expected-output" \
 		'=> Substituting "class" in does not exist' \
-		'info: [subst.mk:class] Ignoring non-existent file "does".' \
-		'info: [subst.mk:class] Ignoring non-existent file "not".' \
-		'info: [subst.mk:class] Ignoring non-existent file "exist".'
+		'info: [subst.mk:class] Ignoring nonexistent file "does".' \
+		'info: [subst.mk:class] Ignoring nonexistent file "not".' \
+		'info: [subst.mk:class] Ignoring nonexistent file "exist".'
 	assert_that "actual-output" --file-equals "expected-output"
 	assert_that "$exitcode" --equals "0"
 
@@ -1026,7 +1026,7 @@ if test_case_begin "empty SUBST_SED"; then
 
 	assert_that "out" --file-is-lines \
 		'=> Substituting "id" in file' \
-		'warning: [subst.mk:id] Ignoring non-existent file "file".' \
+		'warning: [subst.mk:id] Ignoring nonexistent file "file".' \
 		'fail: [subst.mk:id] The filename pattern "file" has no effect.' \
 		'*** Error code 1' \
 		'' \
@@ -1060,7 +1060,7 @@ if test_case_begin "typo in SUBST_CLASSES"; then
 
 	assert_that "out" --file-is-lines \
 		'=> Substituting "id" in file' \
-		'warning: [subst.mk:id] Ignoring non-existent file "file".' \
+		'warning: [subst.mk:id] Ignoring nonexistent file "file".' \
 		'fail: [subst.mk:id] The filename pattern "file" has no effect.' \
 		'*** Error code 1' \
 		'' \
@@ -1222,6 +1222,8 @@ if test_case_begin "identity substitution, found in file"; then
 		'SUBST_CLASSES+=	id' \
 		'SUBST_FILES.id=	file' \
 		'SUBST_SED.id=		-e s,before,before,' \
+		'SUBST_SED.id+=		-e "s,before,before,"' \
+		"SUBST_SED.id+=		-e 's,before,before,'" \
 		'SUBST_NOOP_OK.id=	no' \
 		'' \
 		'.include "prepare-subst.mk"' \
@@ -1445,6 +1447,39 @@ if test_case_begin "backtick in SUBST_SED"; then
 	assert_that "out" --file-is-lines \
 		'=> Substituting "id" in file' \
 		'info: [subst.mk:id] Nothing changed in "file".'
+
+	test_case_end
+fi
+
+
+if test_case_begin "multiple sed commands with semicolon"; then
+
+	# From PR pkg/55226:
+	#  ===> Configuring for perl-5.30.2
+	# sh: 1: Syntax error: Word "/d"p" unexpected (expecting ")")
+
+	create_file_lines "testcase.mk" \
+		'SUBST_CLASSES+=	id' \
+		'SUBST_FILES.id=	file' \
+		'SUBST_SED.id=		-e "s/755/755/g;/umask(/d"' \
+		'SUBST_NOOP_OK.id=	no' \
+		'' \
+		'.include "prepare-subst.mk"' \
+		'.include "mk/subst.mk"'
+	create_file_lines "file" \
+		'$mode = 755;'
+
+	run_bmake "testcase.mk" "subst-id" 1> "$tmpdir/out" 2>&1 \
+	&& exitcode=0 || exitcode=$?
+
+	assert_that "out" --file-is-lines \
+		'=> Substituting "id" in file' \
+		'warning: [subst.mk:id] Nothing changed in "file".' \
+		'fail: [subst.mk:id] The filename pattern "file" has no effect.' \
+		'*** Error code 1' \
+		'' \
+		'Stop.' \
+		"$make: stopped in $PWD"
 
 	test_case_end
 fi
