@@ -1,7 +1,8 @@
-# $NetBSD: Makefile,v 1.1 2020/04/17 11:28:02 tm Exp $
+# $NetBSD: Makefile,v 1.3 2020/05/02 19:16:15 rillig Exp $
 
 VERSION=	1.2.8
 PKGNAME=	up-imapproxy-${VERSION}
+PKGREVISION=	1
 DISTNAME=	up-imapproxy_${VERSION}~svn20171105.orig
 CATEGORIES=	mail
 MASTER_SITES=	${MASTER_SITE_DEBIAN:=pool/main/u/up-imapproxy/}
@@ -29,6 +30,21 @@ SUBST_STAGE.paths=	pre-configure
 SUBST_FILES.paths=	include/imapproxy.h
 SUBST_VARS.paths=	PKG_SYSCONFDIR VARBASE
 SUBST_MESSAGE.paths=	Fixing hard coded paths.
+
+SUBST_CLASSES+=		readme
+SUBST_STAGE.readme=	pre-configure
+SUBST_FILES.readme=	README*
+SUBST_SED.readme=	-e 's,/usr/local/etc,${PKG_SYSCONFDIR},g'
+SUBST_SED.readme+=	-e 's,/usr/local,${PREFIX},g'
+
+# These variables are unused and contain CVS Ids.
+SUBST_CLASSES+=		patch
+SUBST_STAGE.patch=	post-extract
+SUBST_FILES.patch=	src/main.c
+SUBST_MESSAGE.patch=	Fixing patch for CVS commit
+SUBST_SED.patch=	-e '/static char \*sourceRevision/d'
+SUBST_SED.patch+=	-e '/static char \*sourceVersion/d'
+SUBST_SED.patch+=	-e '/static char \*sourceAuthor/d'
 
 post-install:
 .for doc in COPYING ChangeLog README README.known_issues README.ssl

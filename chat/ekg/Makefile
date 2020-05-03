@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.59 2020/04/17 12:29:32 adam Exp $
+# $NetBSD: Makefile,v 1.61 2020/05/02 01:35:20 mef Exp $
 
-DISTNAME=	ekg-20200416
+DISTNAME=	ekg-20200501
 CATEGORIES=	chat
 MASTER_SITES=	http://ekg.chmurka.net/
 MASTER_SITES+=	http://ekg.chmurka.net/archive/
@@ -38,5 +38,6 @@ LIBS+=	-lexecinfo
 .include "../../devel/zlib/buildlink3.mk"
 .include "../../security/openssl/buildlink3.mk"
 .include "../../mk/curses.buildlink3.mk"
+.include "../../devel/ncurses/buildlink3.mk"
 .include "../../mk/jpeg.buildlink3.mk"
 .include "../../mk/bsd.pkg.mk"
