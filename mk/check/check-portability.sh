@@ -1,4 +1,4 @@
-# $NetBSD: check-portability.sh,v 1.19 2020/03/13 08:11:36 rillig Exp $
+# $NetBSD: check-portability.sh,v 1.22 2020/05/05 05:55:26 rillig Exp $
 #
 # This program checks all files in the current directory and any
 # subdirectories for portability issues that are likely to result in
@@ -34,6 +34,17 @@ check_shell() {
 	fi
 }
 
+patched_files=",$(awk '
+	BEGIN {
+		if (ARGV[1] ~ /\/patch-\*$/)
+			exit;
+		ORS = ","
+	}
+	/^\+\+\+ / {
+		print $2
+	}' \
+	"$PATCHDIR"/patch-*),"
+
 find ./* -type f -print 2>/dev/null \
 | sed 's,$,_,' \
 | {
@@ -44,6 +55,11 @@ find ./* -type f -print 2>/dev/null \
 
 		skip=no
 		eval "case \"\$fname\" in $SKIP_FILTER *.orig) skip=yes;; esac"
+		case "$fname" in *.in)
+			case ",$patched_files," in *,"${fname%.in}",*)
+				skip=yes
+			esac
+		esac
 		[ $skip = no ] || continue
 
 		skip_shebang_test=no
@@ -64,7 +80,8 @@ find ./* -type f -print 2>/dev/null \
 		(c|C|cc|cxx|f|go|pl|py|ac|m4)				continue ;;
 		esac
 
-		if [ $skip_shebang_test = yes ]; then
+		if [ "$CHECK_PORTABILITY_EXPERIMENTAL" = yes ] &&
+		   [ $skip_shebang_test = yes ]; then
 			check_shell "$fname"
 			continue
 		fi

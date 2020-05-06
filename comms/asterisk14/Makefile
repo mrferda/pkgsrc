@@ -1,11 +1,11 @@
-# $NetBSD: Makefile,v 1.43 2020/04/12 08:28:22 adam Exp $
+# $NetBSD: Makefile,v 1.45 2020/05/06 14:04:22 adam Exp $
 #
 # NOTE: when updating this package, there are two places that sound
 #       tarballs need to be checked; look in ${WRKSRC}/sounds/Makefile
 #       to find out the current sound file versions
 
-DISTNAME=	asterisk-14.7.5
-PKGREVISION=	22
+DISTNAME=	asterisk-14.7.8
+PKGREVISION=	1
 CATEGORIES=	comms net audio
 MASTER_SITES=	http://downloads.asterisk.org/pub/telephony/asterisk/
 MASTER_SITES+=	http://downloads.asterisk.org/pub/telephony/asterisk/old-releases/
@@ -20,7 +20,7 @@ EXTRACT_ONLY=	${DISTNAME}.tar.gz
 OWNER=		jnemeth@NetBSD.org
 HOMEPAGE=	https://www.asterisk.org/
 
-MAKE_JOBS_SAFE=	NO
+MAKE_JOBS_SAFE=	no
 
 # known to have issues on i386, block the package until the bug is fixed
 BROKEN_ON_PLATFORM=	NetBSD-*-i386
@@ -283,7 +283,7 @@ post-install:
 	${INSTALL_DATA} ${WRKSRC}/doc/api-1.6.2-changes.txt ${DESTDIR}${PREFIX}/share/doc/${PKGBASE}
 	cp -r ${WRKSRC}/doc/Asterisk-Admin-Guide ${DESTDIR}${PREFIX}/share/doc/${PKGBASE}/Asterisk-Admin-Guide
 
-.if ${OPSYS} != "Darwin" && ${PKGSRC_COMPILER} == "clang"
+.if ${OPSYS} != "Darwin" && ${PKGSRC_COMPILER:Mclang}
 .include "../../lang/libBlocksRuntime/buildlink3.mk"
 LDFLAGS+= -L${PREFIX}/lib
 .endif

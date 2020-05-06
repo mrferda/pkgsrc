@@ -1,5 +1,5 @@
 #! /bin/sh
-# $NetBSD: help.sh,v 1.1 2020/03/30 06:40:53 rillig Exp $
+# $NetBSD: help.sh,v 1.4 2020/05/03 09:51:07 rillig Exp $
 #
 # Test cases for "bmake help", mainly implemented in mk/help/help.awk.
 #
@@ -89,6 +89,56 @@ if test_case_begin "short help topic"; then
 		'# topic' \
 		'#' \
 		'# Explanation of the topic.' \
+
+	test_case_end
+fi
+
+
+if test_case_begin "comments without keywords"; then
+
+	# In the top-level Makefile, the SUBDIR section contains a few
+	# comment lines, which are implementation comments and do not
+	# contain keywords.  These should not appear in the help.
+
+	create_file_lines "Makefile" \
+		'SUBDIR+=	subdir1' \
+		'# Comment1' \
+		'# Comment2' \
+		'# Comment3' \
+		'SUBDIR+=	subdir2'
+
+	TOPIC=':all' awk -f "$pkgsrcdir/mk/help/help.awk" \
+		'Makefile' >"out"
+
+	assert_that 'out' --file-is-lines \
+		'No help found for :all.'
+
+	test_case_end
+fi
+
+
+if test_case_begin "commented variables with continuation lines"; then
+
+	# When a variable assignment is commented out, it can still
+	# contain continuation lines.  These are not ordinary comments
+	# and therefore do not count to the minimum number of comment
+	# lines.
+	#
+	# Found in mk/defaults/mk.conf.
+
+	create_file_lines "mk.conf" \
+		'# Australia.' \
+		'#' \
+		'#MASTER_SITE_OPENOFFICE=	... \' \
+		'#				... \' \
+		'#				...' \
+		'#'
+
+	TOPIC=':all' awk -f "$pkgsrcdir/mk/help/help.awk" \
+		'mk.conf' >"out"
+
+	assert_that 'out' --file-is-lines \
+		'No help found for :all.'
 
 	test_case_end
 fi

@@ -1,6 +1,7 @@
-# $NetBSD: Makefile,v 1.237 2020/04/30 17:16:04 adam Exp $
+# $NetBSD: Makefile,v 1.239 2020/05/06 14:04:29 adam Exp $
 
 DISTNAME=	qemu-5.0.0
+PKGREVISION=	1
 CATEGORIES=	emulators
 MASTER_SITES=	https://download.qemu.org/
 EXTRACT_SUFX=	.tar.xz
@@ -30,7 +31,7 @@ SUBST_VARS.prefix+=		PREFIX
 SUBST_CLASSES+=			sphinx-build
 SUBST_STAGE.sphinx-build=	pre-configure
 SUBST_MESSAGE.sphinx-build=	Fix hardcoded sphinx-build
-SUBST_FILES.sphinx-build+=	Makefile configure
+SUBST_FILES.sphinx-build+=	configure
 SUBST_FILES.sphinx-build+=	roms/skiboot/doc/Makefile
 SUBST_FILES.sphinx-build+=	roms/u-boot/Documentation/Makefile
 SUBST_SED.sphinx-build+=	-e 's/sphinx-build/sphinx-build-${PYVERSSUFFIX}/g'
