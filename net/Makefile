@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1327 2020/05/01 17:55:05 nia Exp $
+# $NetBSD: Makefile,v 1.1329 2020/05/08 09:33:30 fcambus Exp $
 #
 
 COMMENT=	Networking tools
@@ -85,6 +85,7 @@ SUBDIR+=	csup
 SUBDIR+=	dante
 SUBDIR+=	daq
 SUBDIR+=	darkstat
+SUBDIR+=	dbip-asn-lite
 SUBDIR+=	dbip-city-lite
 SUBDIR+=	dbip-country-lite
 SUBDIR+=	dc_gui2
@@ -853,6 +854,7 @@ SUBDIR+=	sslh
 SUBDIR+=	ssmping
 SUBDIR+=	ssync
 SUBDIR+=	stagit-gopher
+SUBDIR+=	statzone
 SUBDIR+=	stund
 SUBDIR+=	sup
 SUBDIR+=	syncffsd

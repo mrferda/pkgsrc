@@ -1,4 +1,4 @@
-# $NetBSD: create.mk,v 1.11 2019/03/24 11:29:19 rillig Exp $
+# $NetBSD: create.mk,v 1.13 2020/05/09 21:08:05 rillig Exp $
 #
 # Copyright (c) 2005, 2006 The NetBSD Foundation, Inc.
 # All rights reserved.
@@ -79,6 +79,14 @@
 #    TOOLS_FAIL is a list of tools that return false and record their
 #	call in the .warning directory, which is later shown.
 #
+# User-settable variables:
+#
+# TOOLS_ALWAYS_WRAP
+#	If defined, all tools are wrapped using a small shell program,
+#	even if a symlink were sufficient.  This will record all
+#	invocations of the tools in the work log (.work.log by default).
+#	It makes the tool invocations slower and is therefore only
+#	useful during a debugging session.
 
 ######################################################################
 
@@ -160,7 +168,7 @@ ${TOOLS_CMD.${_t_}}:
 			logmain=${TOOLS_PATH.${_t_}:Q:Q}\"\ \"${TOOLS_ARGS.${_t_}:Q:Q}; \
 			logsuffix='$$shquoted_args';			\
 		else							\
-			case ${TOOLS_PATH.${_t_}:Q}"" in		\
+			case ${TOOLS_ALWAYS_WRAP:Dwrap}${TOOLS_PATH.${_t_}:Q}"" in \
 			/*)	create=symlink ;;			\
 			*)	create=wrapper;				\
 				script=${TOOLS_SCRIPT_DFLT.${_t_}:Q};	\
@@ -176,7 +184,7 @@ ${TOOLS_CMD.${_t_}}:
 	wrapper)							\
 		{ ${ECHO} '#!'${TOOLS_SHELL:Q};				\
 		  ${ECHO} 'tools_wrapper_sed='${SED:Q:Q};		\
-		  ${SED} -e '/^$$/d' -e '/^\#/d' ${PKGSRCDIR}/mk/tools/shquote.sh; \
+		  ${SED} -e '/^$$/d' -e '/^	*#/d' ${PKGSRCDIR}/mk/tools/shquote.sh; \
 		  ${ECHO} 'wrapperlog="$${TOOLS_WRAPPER_LOG-'${_TOOLS_WRAP_LOG:Q}'}"'; \
 		  ${ECHO} 'shquote_args "$$@"';				\
 		  ${ECHO} '${ECHO} "[*] "'${.TARGET:Q}'"$$shquoted_args" >> $$wrapperlog'; \
