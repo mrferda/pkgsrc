@@ -1,14 +1,14 @@
-# $NetBSD: Makefile,v 1.45 2020/03/04 11:35:10 micha Exp $
+# $NetBSD: Makefile,v 1.47 2020/05/12 09:41:40 micha Exp $
 
-DISTNAME=	schily-2020-02-11
+DISTNAME=	schily-2020-05-11
 PKGNAME=	star-1.6.1
-PKGREVISION=	5
+PKGREVISION=	6
 CATEGORIES=	archivers
 MASTER_SITES=	${MASTER_SITE_SOURCEFORGE:=schilytools/}
 EXTRACT_SUFX=	.tar.bz2
 
 MAINTAINER=	pkgsrc-users@NetBSD.org
-HOMEPAGE=	https://s-tar.sf.net/
+HOMEPAGE=	https://sourceforge.net/projects/schilytools/
 COMMENT=	Unique standard tape archiver
 LICENSE=	cddl-1.0
 
@@ -29,6 +29,7 @@ MAKE_FLAGS+=	CPPOPTX=${CPPFLAGS:Q} COPTX=${CFLAGS:Q} LDOPTX=${LDFLAGS:Q}
 STAR_CONF?=	${PKG_SYSCONFDIR}/star
 
 CONF_FILES=	${PREFIX}/share/examples/star/star ${STAR_CONF}
+SPECIAL_PERMS+=	${PREFIX}/share/examples/star/star ${REAL_ROOT_USER} ${REAL_ROOT_GROUP} 0644
 AUTO_MKDIRS=	yes
 
 # Configure config file location
