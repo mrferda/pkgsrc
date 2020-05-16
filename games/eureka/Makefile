@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3 2020/04/27 18:38:44 micha Exp $
+# $NetBSD: Makefile,v 1.5 2020/05/15 15:20:50 jperkin Exp $
 
 DISTNAME=	eureka-1.27b-source
 # Some macOS patches were added after the release of 1.27 but unfortunately
