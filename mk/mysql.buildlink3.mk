@@ -56,7 +56,7 @@ BUILD_DEFS_EFFECTS+=		MYSQL_VERSION MYSQL_PKG_PREFIX
 
 # The available MySQL packages:
 _PKG_MYSQLS=			80 57 56 55 mariadb100 mariadb55
-_PKG_MYSQLS+=			57-cluster
+_PKG_MYSQLS+=			57-cluster percona80-cluster
 _PKG_MYSQLS+=			percona80 percona57 percona56 percona55
 _PKG_MYSQLS+=			percona57-cluster percona56-cluster percona55-cluster
 
@@ -118,6 +118,10 @@ _MYSQL_PKG_PREFIX.percona56-cluster=	percona56-cluster
 _MYSQL_PKGBASE.percona57-cluster=	percona-cluster-5.7.*
 _MYSQL_PKGSRCDIR.percona57-cluster=	../../joyent/percona57-cluster
 _MYSQL_PKG_PREFIX.percona57-cluster=	percona57-cluster
+
+_MYSQL_PKGBASE.percona80-cluster=	percona-cluster-8.0.*
+_MYSQL_PKGSRCDIR.percona80-cluster=	../../joyent/percona80-cluster
+_MYSQL_PKG_PREFIX.percona80-cluster=	percona80-cluster
 
 #
 # Sanity checks
