@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3126 2020/05/16 07:51:58 adam Exp $
+# $NetBSD: Makefile,v 1.3132 2020/05/19 18:37:49 wiz Exp $
 #
 
 COMMENT=	Development utilities
@@ -1165,6 +1165,7 @@ SUBDIR+=	p5-Class-MethodMaker
 SUBDIR+=	p5-Class-Mix
 SUBDIR+=	p5-Class-OOorNO
 SUBDIR+=	p5-Class-ObjectTemplate
+SUBDIR+=	p5-Class-Refresh
 SUBDIR+=	p5-Class-ReturnValue
 SUBDIR+=	p5-Class-Singleton
 SUBDIR+=	p5-Class-Std
@@ -1181,6 +1182,7 @@ SUBDIR+=	p5-Clone
 SUBDIR+=	p5-Clone-Choose
 SUBDIR+=	p5-Clone-Fast
 SUBDIR+=	p5-Clone-PP
+SUBDIR+=	p5-Compiler-Lexer
 SUBDIR+=	p5-Compress-PPMd
 SUBDIR+=	p5-Compress-Raw-Bzip2
 SUBDIR+=	p5-Compress-Raw-Zlib
@@ -2229,6 +2231,7 @@ SUBDIR+=	py-execnet
 SUBDIR+=	py-expressions
 SUBDIR+=	py-extras
 SUBDIR+=	py-extratools
+SUBDIR+=	py-factory_boy
 SUBDIR+=	py-fakefs
 SUBDIR+=	py-faker
 SUBDIR+=	py-falcon
@@ -2530,6 +2533,7 @@ SUBDIR+=	py-termcolor
 SUBDIR+=	py-test
 SUBDIR+=	py-test-assume
 SUBDIR+=	py-test-asyncio
+SUBDIR+=	py-test-benchmark
 SUBDIR+=	py-test-cache
 SUBDIR+=	py-test-cov
 SUBDIR+=	py-test-fixture-config
@@ -2598,6 +2602,7 @@ SUBDIR+=	py-wrapt
 SUBDIR+=	py-xdg
 SUBDIR+=	py-xdis
 SUBDIR+=	py-xopen
+SUBDIR+=	py-yapf
 SUBDIR+=	py-zanata-python-client
 SUBDIR+=	py-zc.lockfile
 SUBDIR+=	py-zconfig

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.459 2020/04/27 16:52:55 adam Exp $
+# $NetBSD: Makefile,v 1.463 2020/05/19 21:42:29 riastradh Exp $
 
 COMMENT=	Mathematics
 
@@ -161,9 +161,11 @@ SUBDIR+=	fftw2
 SUBDIR+=	fftwf
 SUBDIR+=	fgmp
 SUBDIR+=	fityk
+SUBDIR+=	fplll
 SUBDIR+=	fricas
 SUBDIR+=	galculator
 SUBDIR+=	gap
+SUBDIR+=	gappa
 SUBDIR+=	gcalctool
 SUBDIR+=	geg
 SUBDIR+=	genius
@@ -229,6 +231,7 @@ SUBDIR+=	metis
 SUBDIR+=	minisat
 SUBDIR+=	minpack
 SUBDIR+=	mpcomplex
+SUBDIR+=	mpfi
 SUBDIR+=	mpfr
 SUBDIR+=	mprime-bin
 SUBDIR+=	mtl
@@ -385,6 +388,7 @@ SUBDIR+=	sc-im
 SUBDIR+=	scilab
 SUBDIR+=	slatec
 SUBDIR+=	snns
+SUBDIR+=	sollya
 SUBDIR+=	speedcrunch
 SUBDIR+=	stan-math
 SUBDIR+=	statist

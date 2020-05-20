@@ -1,6 +1,6 @@
-# $NetBSD: Makefile,v 1.18 2019/11/26 18:34:31 nia Exp $
+# $NetBSD: Makefile,v 1.20 2020/05/18 16:45:36 wiz Exp $
 
-DISTNAME=	include-what-you-use-0.13.src
+DISTNAME=	include-what-you-use-0.14.src
 PKGNAME=	${DISTNAME:S/.src//1}
 CATEGORIES=	devel
 MASTER_SITES=	https://include-what-you-use.org/downloads/
@@ -12,9 +12,9 @@ LICENSE=	modified-bsd
 
 WRKSRC=		${WRKDIR}/include-what-you-use
 USE_CMAKE=	yes
-USE_LANGUAGES=	c c++
+USE_LANGUAGES=	c c++14
 
-GCC_REQD+=	4.8
+GCC_REQD+=	5
 
 CMAKE_ARGS=	-DIWYU_LLVM_ROOT_PATH:PATH=${BUILDLINK_PREFIX.clang}
 
