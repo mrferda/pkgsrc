@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.488 2020/05/11 10:49:12 micha Exp $
+# $NetBSD: Makefile,v 1.490 2020/05/21 08:42:57 plunky Exp $
 #
 
 COMMENT=	Games
@@ -95,6 +95,7 @@ SUBDIR+=	doom-pwad-shotgun-symphony
 SUBDIR+=	doom-pwad-sigil
 SUBDIR+=	doom1
 SUBDIR+=	doom2-pwad-eviternity
+SUBDIR+=	doom2-pwad-lost-civilization
 SUBDIR+=	doom2-pwad-preacher
 SUBDIR+=	doom2-pwad-struggle
 SUBDIR+=	doomlegacy
@@ -299,6 +300,7 @@ SUBDIR+=	not_tetris
 SUBDIR+=	nudoku
 SUBDIR+=	omega
 SUBDIR+=	onscripter
+SUBDIR+=	openhexagon
 SUBDIR+=	openjk
 SUBDIR+=	openmortal
 SUBDIR+=	openmw
