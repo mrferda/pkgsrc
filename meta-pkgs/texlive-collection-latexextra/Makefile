@@ -1,7 +1,7 @@
-# $NetBSD: Makefile,v 1.51 2020/05/10 13:02:32 markd Exp $
+# $NetBSD: Makefile,v 1.53 2020/05/22 03:57:05 markd Exp $
 
 DISTNAME=	collection-latexextra
-PKGNAME=	texlive-${DISTNAME}-2020pre1
+PKGNAME=	texlive-${DISTNAME}-2020pre3
 CATEGORIES=	meta-pkgs
 MASTER_SITES=	# empty
 TEXLIVE_REV=	55060
@@ -256,56 +256,55 @@ DEPENDS+=	tex-cutwin-[0-9]*:../../print/tex-cutwin
 # depend cyber
 # depend cybercic
 DEPENDS+=	tex-dashbox-[0-9]*:../../print/tex-dashbox
-# depend dashrule
+DEPENDS+=	tex-dashrule-[0-9]*:../../print/tex-dashrule
 # depend dashundergaps
 # depend dataref
 DEPENDS+=	tex-datatool-[0-9]*:../../print/tex-datatool
 # depend dateiliste
 DEPENDS+=	tex-datenumber-[0-9]*:../../time/tex-datenumber
 DEPENDS+=	tex-datetime-[0-9]*:../../print/tex-datetime
-# depend datetime2
-# depend datetime2-bahasai
-# depend datetime2-basque
-# depend datetime2-breton
-# depend datetime2-bulgarian
-# depend datetime2-catalan
-# depend datetime2-croatian
-# depend datetime2-czech
-# depend datetime2-danish
-# depend datetime2-dutch
-# depend datetime2-en-fulltext
-# depend datetime2-english
-# depend datetime2-esperanto
-# depend datetime2-estonian
-# depend datetime2-finnish
-# depend datetime2-french
-# depend datetime2-galician
-# depend datetime2-german
-# depend datetime2-greek
-# depend datetime2-hebrew
-# depend datetime2-icelandic
-# depend datetime2-irish
-# depend datetime2-it-fulltext
-# depend datetime2-italian
-# depend datetime2-latin
-# depend datetime2-lsorbian
-# depend datetime2-magyar
-# depend datetime2-norsk
-# depend datetime2-polish
-# depend datetime2-portuges
-# depend datetime2-romanian
-# depend datetime2-russian
-# depend datetime2-samin
-# depend datetime2-scottish
-# depend datetime2-serbian
-# depend datetime2-slovak
-# depend datetime2-slovene
-# depend datetime2-spanish
-# depend datetime2-swedish
-# depend datetime2-turkish
-# depend datetime2-ukrainian
-# depend datetime2-usorbian
-# depend datetime2-welsh
+DEPENDS+=	tex-datetime2-bahasai-[0-9]*:../../time/tex-datetime2-bahasai
+DEPENDS+=	tex-datetime2-basque-[0-9]*:../../time/tex-datetime2-basque
+DEPENDS+=	tex-datetime2-breton-[0-9]*:../../time/tex-datetime2-breton
+DEPENDS+=	tex-datetime2-bulgarian-[0-9]*:../../time/tex-datetime2-bulgarian
+DEPENDS+=	tex-datetime2-catalan-[0-9]*:../../time/tex-datetime2-catalan
+DEPENDS+=	tex-datetime2-croatian-[0-9]*:../../time/tex-datetime2-croatian
+DEPENDS+=	tex-datetime2-czech-[0-9]*:../../time/tex-datetime2-czech
+DEPENDS+=	tex-datetime2-danish-[0-9]*:../../time/tex-datetime2-danish
+DEPENDS+=	tex-datetime2-dutch-[0-9]*:../../time/tex-datetime2-dutch
+DEPENDS+=	tex-datetime2-en-fulltext-[0-9]*:../../time/tex-datetime2-en-fulltext
+DEPENDS+=	tex-datetime2-english-[0-9]*:../../time/tex-datetime2-english
+DEPENDS+=	tex-datetime2-esperanto-[0-9]*:../../time/tex-datetime2-esperanto
+DEPENDS+=	tex-datetime2-estonian-[0-9]*:../../time/tex-datetime2-estonian
+DEPENDS+=	tex-datetime2-finnish-[0-9]*:../../time/tex-datetime2-finnish
+DEPENDS+=	tex-datetime2-french-[0-9]*:../../time/tex-datetime2-french
+DEPENDS+=	tex-datetime2-galician-[0-9]*:../../time/tex-datetime2-galician
+DEPENDS+=	tex-datetime2-german-[0-9]*:../../time/tex-datetime2-german
+DEPENDS+=	tex-datetime2-greek-[0-9]*:../../time/tex-datetime2-greek
+DEPENDS+=	tex-datetime2-hebrew-[0-9]*:../../time/tex-datetime2-hebrew
+DEPENDS+=	tex-datetime2-icelandic-[0-9]*:../../time/tex-datetime2-icelandic
+DEPENDS+=	tex-datetime2-irish-[0-9]*:../../time/tex-datetime2-irish
+DEPENDS+=	tex-datetime2-it-fulltext-[0-9]*:../../time/tex-datetime2-it-fulltext
+DEPENDS+=	tex-datetime2-italian-[0-9]*:../../time/tex-datetime2-italian
+DEPENDS+=	tex-datetime2-latin-[0-9]*:../../time/tex-datetime2-latin
+DEPENDS+=	tex-datetime2-lsorbian-[0-9]*:../../time/tex-datetime2-lsorbian
+DEPENDS+=	tex-datetime2-magyar-[0-9]*:../../time/tex-datetime2-magyar
+DEPENDS+=	tex-datetime2-norsk-[0-9]*:../../time/tex-datetime2-norsk
+DEPENDS+=	tex-datetime2-polish-[0-9]*:../../time/tex-datetime2-polish
+DEPENDS+=	tex-datetime2-portuges-[0-9]*:../../time/tex-datetime2-portuges
+DEPENDS+=	tex-datetime2-romanian-[0-9]*:../../time/tex-datetime2-romanian
+DEPENDS+=	tex-datetime2-russian-[0-9]*:../../time/tex-datetime2-russian
+DEPENDS+=	tex-datetime2-samin-[0-9]*:../../time/tex-datetime2-samin
+DEPENDS+=	tex-datetime2-scottish-[0-9]*:../../time/tex-datetime2-scottish
+DEPENDS+=	tex-datetime2-serbian-[0-9]*:../../time/tex-datetime2-serbian
+DEPENDS+=	tex-datetime2-slovak-[0-9]*:../../time/tex-datetime2-slovak
+DEPENDS+=	tex-datetime2-slovene-[0-9]*:../../time/tex-datetime2-slovene
+DEPENDS+=	tex-datetime2-spanish-[0-9]*:../../time/tex-datetime2-spanish
+DEPENDS+=	tex-datetime2-swedish-[0-9]*:../../time/tex-datetime2-swedish
+DEPENDS+=	tex-datetime2-turkish-[0-9]*:../../time/tex-datetime2-turkish
+DEPENDS+=	tex-datetime2-ukrainian-[0-9]*:../../time/tex-datetime2-ukrainian
+DEPENDS+=	tex-datetime2-usorbian-[0-9]*:../../time/tex-datetime2-usorbian
+DEPENDS+=	tex-datetime2-welsh-[0-9]*:../../time/tex-datetime2-welsh
 DEPENDS+=	tex-dblfloatfix-[0-9]*:../../print/tex-dblfloatfix
 # depend decimal
 # depend decorule
@@ -383,7 +382,7 @@ DEPENDS+=	tex-endnotes-[0-9]*:../../print/tex-endnotes
 # depend endnotes-hy
 # depend engpron
 # depend engrec
-# depend enotez
+DEPENDS+=	tex-enotez-[0-9]*:../../print/tex-enotez
 DEPENDS+=	tex-enumitem-[0-9]*:../../print/tex-enumitem
 # depend enumitem-zref
 # depend envbig
@@ -769,7 +768,7 @@ DEPENDS+=	tex-mfirstuc-[0-9]*:../../print/tex-mfirstuc
 DEPENDS+=	tex-midpage-[0-9]*:../../print/tex-midpage
 # depend minibox
 # depend minidocument
-# depend minifp
+DEPENDS+=	tex-minifp-[0-9]*:../../math/tex-minifp
 # depend minipage-marginpar
 DEPENDS+=	tex-minitoc-[0-9]*:../../print/tex-minitoc
 # depend minorrevision
@@ -974,7 +973,7 @@ DEPENDS+=	tex-prosper-[0-9]*:../../print/tex-prosper
 # depend quicktype
 # depend quiz2socrative
 # depend quotchap
-# depend quoting
+DEPENDS+=	tex-quoting-[0-9]*:../../print/tex-quoting
 # depend quotmark
 # depend ran_toks
 # depend randtext
@@ -1022,7 +1021,7 @@ DEPENDS+=	tex-rotfloat-[0-9]*:../../print/tex-rotfloat
 # depend sanitize-umlaut
 DEPENDS+=	tex-sauerj-[0-9]*:../../print/tex-sauerj
 # depend savefnmark
-# depend savesym
+DEPENDS+=	tex-savesym-[0-9]*:../../print/tex-savesym
 # depend savetrees
 DEPENDS+=	tex-scale-[0-9]*:../../print/tex-scale
 # depend scalebar
@@ -1066,7 +1065,7 @@ DEPENDS+=	tex-showdim-[0-9]*:../../print/tex-showdim
 DEPENDS+=	tex-showlabels-[0-9]*:../../print/tex-showlabels
 DEPENDS+=	tex-sidecap-[0-9]*:../../print/tex-sidecap
 # depend sidenotes
-# depend silence
+DEPENDS+=	tex-silence-[0-9]*:../../print/tex-silence
 # depend simplecd
 # depend simplecv
 # depend simpleinvoice
@@ -1179,7 +1178,7 @@ DEPENDS+=	tex-textpos-[0-9]*:../../print/tex-textpos
 DEPENDS+=	tex-thmtools-[0-9]*:../../print/tex-thmtools
 # depend threadcol
 DEPENDS+=	tex-threeparttable-[0-9]*:../../print/tex-threeparttable
-# depend threeparttablex
+DEPENDS+=	tex-threeparttablex-[0-9]*:../../print/tex-threeparttablex
 # depend thumb
 # depend thumbs
 # depend thumby
@@ -1203,7 +1202,7 @@ DEPENDS+=	tex-todonotes-[0-9]*:../../print/tex-todonotes
 # depend topiclongtable
 # depend totcount
 DEPENDS+=	tex-totpages-[0-9]*:../../print/tex-totpages
-# depend translations
+DEPENDS+=	tex-translations-[0-9]*:../../print/tex-translations
 DEPENDS+=	tex-transparent-[0-9]*:../../print/tex-transparent
 # depend trfsigns
 DEPENDS+=	tex-trimspaces-[0-9]*:../../print/tex-trimspaces
@@ -1295,7 +1294,7 @@ DEPENDS+=	tex-xifthen-[0-9]*:../../devel/tex-xifthen
 # depend xmpincl
 # depend xnewcommand
 # depend xoptarg
-# depend xpatch
+DEPENDS+=	tex-xpatch-[0-9]*:../../print/tex-xpatch
 # depend xpeek
 # depend xprintlen
 # depend xpunctuate
