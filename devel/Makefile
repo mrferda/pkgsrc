@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.3134 2020/05/23 08:19:22 adam Exp $
+# $NetBSD: Makefile,v 1.3138 2020/05/25 13:54:49 taca Exp $
 #
 
 COMMENT=	Development utilities
@@ -264,6 +264,7 @@ SUBDIR+=	devIL
 SUBDIR+=	devhelp
 SUBDIR+=	device-driver-doc-de
 SUBDIR+=	dia2code
+SUBDIR+=	diffbreaker
 SUBDIR+=	diffuse
 SUBDIR+=	diffutils
 SUBDIR+=	distcc
@@ -884,7 +885,6 @@ SUBDIR+=	meson
 SUBDIR+=	mk-configure
 SUBDIR+=	mkcmd
 SUBDIR+=	mm-common
-SUBDIR+=	mono-addins
 SUBDIR+=	monotone
 SUBDIR+=	monotone-server
 SUBDIR+=	monotone-viz
@@ -2622,7 +2622,6 @@ SUBDIR+=	pythontidy
 SUBDIR+=	qbzr
 SUBDIR+=	qconf
 SUBDIR+=	qjson
-SUBDIR+=	qof
 SUBDIR+=	qore-uuid-module
 SUBDIR+=	qtscriptgenerator
 SUBDIR+=	quilt
@@ -2849,6 +2848,7 @@ SUBDIR+=	ruby-stomp
 SUBDIR+=	ruby-stream
 SUBDIR+=	ruby-subexec
 SUBDIR+=	ruby-subversion
+SUBDIR+=	ruby-sync
 SUBDIR+=	ruby-templater
 SUBDIR+=	ruby-term-ansicolor
 SUBDIR+=	ruby-termcolor
