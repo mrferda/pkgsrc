@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.4 2020/05/12 18:40:35 adam Exp $
+# $NetBSD: Makefile,v 1.6 2020/05/25 05:58:16 adam Exp $
 
 DISTNAME=	OnionBalance-0.2.0
 PKGNAME=	${PYPKGPREFIX}-${DISTNAME:tl}
@@ -27,19 +27,13 @@ TEST_DEPENDS+=	${PYPKGPREFIX}-tox-[0-9]*:../../devel/py-tox
 USE_LANGUAGES=	# none
 
 PYSETUPTESTTARGET=	pytest
-REPLACE_PYTHON+=	onionbalance.py
-REPLACE_PYTHON+=	docs/conf.py
 
 PYTHON_VERSIONS_INCOMPATIBLE=	27
-
-CHECK_INTERPRETER_SKIP+=	test/scripts/install-chutney.sh
-CHECK_INTERPRETER_SKIP+=	test/scripts/install-tor.sh
 
 post-install:
 	cd ${DESTDIR}${PREFIX}/bin && \
 	${MV} onionbalance onionbalance-${PYVERSSUFFIX} && \
 	${MV} onionbalance-config onionbalance-config-${PYVERSSUFFIX} || ${TRUE}
 
-.include "../../lang/python/application.mk"
 .include "../../lang/python/egg.mk"
 .include "../../mk/bsd.pkg.mk"

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.601 2020/05/22 09:02:30 nia Exp $
+# $NetBSD: Makefile,v 1.604 2020/05/23 12:30:19 nia Exp $
 #
 
 COMMENT=	Audio tools
@@ -19,8 +19,6 @@ SUBDIR+=	alsa-plugins-oss
 SUBDIR+=	alsa-plugins-pulse
 SUBDIR+=	alsa-utils
 SUBDIR+=	alure
-SUBDIR+=	amaroc
-SUBDIR+=	amarok
 SUBDIR+=	amp
 SUBDIR+=	ampache
 SUBDIR+=	amsynth
@@ -432,7 +430,6 @@ SUBDIR+=	spiralloops
 SUBDIR+=	spiralsynth
 SUBDIR+=	splay
 SUBDIR+=	sptk
-SUBDIR+=	squeezeboxserver
 SUBDIR+=	strawberry
 SUBDIR+=	streamripper
 SUBDIR+=	streamtuner

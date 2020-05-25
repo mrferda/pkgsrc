@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.60 2020/03/10 22:09:43 wiz Exp $
+# $NetBSD: Makefile,v 1.62 2020/05/25 07:45:47 rillig Exp $
 
 DISTNAME=	Padre-1.00
 PKGNAME=	p5-${DISTNAME}
@@ -14,8 +14,6 @@ LICENSE=	${PERL5_LICENSE}
 MAKE_JOBS_SAFE=	no
 
 USE_LANGUAGES+=	c c++
-REPLACE_PERL+=	share/templates/*.t
-REPLACE_PERL+=	share/templates/*.pl
 REPLACE_PERL+=	share/examples/wx/*.pl
 REPLACE_PERL+=	share/examples/absolute_beginner/*.pl
 

@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.26 2020/04/12 08:28:00 adam Exp $
+# $NetBSD: Makefile,v 1.28 2020/05/24 00:27:26 markd Exp $
 
 DISTNAME=	kemoticons-${KF5VER}
 PKGREVISION=	3
@@ -11,10 +11,8 @@ LICENSE=	gnu-gpl-v2 AND gnu-lgpl-v2.1
 SUBST_CLASSES+=		fix-moc
 SUBST_STAGE.fix-moc=	post-configure
 SUBST_MESSAGE.fix-moc=	Cleaning up MOC includes
-SUBST_FILES.fix-moc=	_KDE_build/src/providers/xmpp/CMakeFiles/emoticonstheme_xmpp_autogen.dir/AutogenInfo.json
-SUBST_FILES.fix-moc+=	_KDE_build/src/providers/kde/CMakeFiles/emoticonstheme_kde_autogen.dir/AutogenInfo.json
-SUBST_FILES.fix-moc+=	_KDE_build/src/providers/adium/CMakeFiles/emoticonstheme_adium_autogen.dir/AutogenInfo.json
-SUBST_FILES.fix-moc+=	_KDE_build/src/providers/pidgin/CMakeFiles/emoticonstheme_pidgin_autogen.dir/AutogenInfo.json
+SUBST_FILES.fix-moc=	_KDE_build/src/providers/*/CMakeFiles/emoticonstheme_*_autogen.dir/AutogenInfo.json
+SUBST_NOOP_OK.fix-moc=	yes
 SUBST_SED.fix-moc=	-e 's;"${PREFIX}/include",;;g'
 
 .include "../../meta-pkgs/kde/kf5.mk"

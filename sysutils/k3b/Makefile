@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.110 2020/05/22 10:56:40 adam Exp $
+# $NetBSD: Makefile,v 1.112 2020/05/24 01:38:27 markd Exp $
 
 DISTNAME=	k3b-${KAPPSVER}
 PKGREVISION=	4
@@ -33,13 +33,8 @@ SUBST_CLASSES+=		fix-moc
 SUBST_STAGE.fix-moc=	post-configure
 SUBST_MESSAGE.fix-moc=	Cleaning up MOC includes
 SUBST_FILES.fix-moc=	_KDE_build/plugins/*/*/CMakeFiles/*_autogen.dir/AutogenInfo.json
+SUBST_NOOP_OK.fix-moc=	yes
 SUBST_SED.fix-moc=	-e 's;"${PREFIX}/include",;;g'
-
-SUBST_CLASSES+=		xdg
-SUBST_STAGE.xdg=	pre-configure
-SUBST_MESSAGE.xdg=	Install via examples dir.
-SUBST_FILES.xdg=	src/CMakeLists.txt
-SUBST_SED.xdg=		-e 's:{KDE_INSTALL_CONFDIR}:{KDE_INSTALL_XDG_EX_DIR}:'
 
 MAKE_DIRS+=		${PKG_SYSCONFDIR}/xdg
 CONF_FILES+=		${PREFIX}/share/examples/k3b/org.kde.k3b.conf \

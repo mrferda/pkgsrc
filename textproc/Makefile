@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.1139 2020/05/18 13:35:05 wiz Exp $
+# $NetBSD: Makefile,v 1.1142 2020/05/25 15:19:00 taca Exp $
 #
 
 COMMENT=	Text processing utilities (does not include desktop publishing)
@@ -981,6 +981,7 @@ SUBDIR+=	robodoc
 SUBDIR+=	rtf-tools
 SUBDIR+=	rtfm
 SUBDIR+=	rubber
+SUBDIR+=	ruby-actionpack-xml_parser
 SUBDIR+=	ruby-actiontext60
 SUBDIR+=	ruby-albino
 SUBDIR+=	ruby-amrita
@@ -990,6 +991,7 @@ SUBDIR+=	ruby-builder
 SUBDIR+=	ruby-cabocha
 SUBDIR+=	ruby-classifier-reborn
 SUBDIR+=	ruby-coderay
+SUBDIR+=	ruby-csv
 SUBDIR+=	ruby-diff-lcs
 SUBDIR+=	ruby-erubi
 SUBDIR+=	ruby-escape
@@ -1003,6 +1005,7 @@ SUBDIR+=	ruby-haml
 SUBDIR+=	ruby-hikidoc
 SUBDIR+=	ruby-hpricot
 SUBDIR+=	ruby-html-parser
+SUBDIR+=	ruby-htmlentities
 SUBDIR+=	ruby-htree
 SUBDIR+=	ruby-inifile
 SUBDIR+=	ruby-itex2MML

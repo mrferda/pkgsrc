@@ -1,4 +1,4 @@
-# $NetBSD: Makefile,v 1.550 2020/05/14 16:58:41 nia Exp $
+# $NetBSD: Makefile,v 1.553 2020/05/25 14:10:11 taca Exp $
 #
 
 COMMENT=	Electronic mail utilities
@@ -79,7 +79,6 @@ SUBDIR+=	elmo
 SUBDIR+=	enma
 SUBDIR+=	esmtp
 SUBDIR+=	etach
-SUBDIR+=	etpan
 SUBDIR+=	evolution
 SUBDIR+=	evolution-data-server
 SUBDIR+=	exim
@@ -349,6 +348,8 @@ SUBDIR+=	ruby-mime-types-data
 SUBDIR+=	ruby-mime-types1
 SUBDIR+=	ruby-mime-types2
 SUBDIR+=	ruby-mini_mime
+SUBDIR+=	ruby-roadie
+SUBDIR+=	ruby-roadie-rails
 SUBDIR+=	ruby-tmail
 SUBDIR+=	safecat
 SUBDIR+=	sendmail
