@@ -1,8 +1,8 @@
 # $NetBSD: Makefile,v 1.58 2020/05/06 14:04:11 adam Exp $
 
-DISTNAME=	libqalculate-3.5.0a
-PKGNAME=	qalculate-3.5.0
-PKGREVISION=	5
+DISTNAME=	libqalculate-3.10.0
+PKGNAME=	qalculate-3.10.0
+PKGREVISION=	1
 CATEGORIES=	math
 MASTER_SITES=	${MASTER_SITE_GITHUB:=Qalculate/}
 GITHUB_PROJECT=	libqalculate
@@ -20,6 +20,7 @@ USE_LIBTOOL=		yes
 USE_PKGLOCALEDIR=	yes
 USE_TOOLS+=		autoconf automake
 USE_TOOLS+=		gmake intltool msgfmt msgmerge xgettext pkg-config
+BUILD_DEPENDS+=       doxygen-[0-9]*:../../devel/doxygen
 GNU_CONFIGURE=		yes
 PKGCONFIG_OVERRIDE=	${WRKSRC}/libqalculate.pc.in
 
